@@ -31,7 +31,7 @@ def createVehicle(make, model, year, color, vType):
 def sinExists(SIN):
 	## Checks to see if a SIN exists on the DB
 	## Returns True for now..
-	return False
+	return True
 
 def DBgetPersonName(SIN):
 	## Returns person at SIN's name
@@ -94,6 +94,8 @@ def tryRegisterOwner(VIN):
 			except:
 				print "Please enter a number"
 				pass
+	
+		## CREATE A PERSON IN THE DB
 		if (sinExists(SIN) == False):
 			print "Sorry, that SIN doesn't exist..."
 			ans = True
@@ -153,6 +155,7 @@ def tryRegisterOwner(VIN):
 						answer = answer.lower()
 						if (answer == "y"):
 							createPerson(SIN, name.lower(), height, weight, eyeColour.lower(), hairColour.lower(), addr.lower(), gender, birthday)
+							print "Registering owner with SIN %d with vehicle with VIN %d" (SIN, VIN)
 							registerOwner(VIN, SIN)
 							ans = False
 							break
@@ -170,6 +173,8 @@ def tryRegisterOwner(VIN):
 				else:
 					print "Sorry, that's not a valid option!"
 			
+
+		## GET PERSON'S DATA FROM DB
 		else:
 			name = DBgetPersonName(SIN)
 			height = DBgetPersonHeight(SIN)
@@ -187,6 +192,7 @@ def tryRegisterOwner(VIN):
 				answer = answer.lower()
 
 				if (answer == "y"):
+					print "Registering owner with SIN %d with vehicle with VIN %d" (SIN, VIN)
 					registerOwner(VIN, SIN)
 					break
 				elif (answer == "n"):
