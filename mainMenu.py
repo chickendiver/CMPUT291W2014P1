@@ -100,7 +100,8 @@ def tryRegisterOwner(VIN):
 			while (ans == True):
 				print "Would you like to create a new instance in the system?"
 				answer = raw_input("[Y/N]: ")
-				if (answer == "Y"):
+				answer = answer.lower()
+				if (answer == "y"):
 					while (True):
 						name = raw_input("Person's name: ")
 						i = True
@@ -129,6 +130,7 @@ def tryRegisterOwner(VIN):
 						addr = raw_input("Person's address: ")
 						while (True):
 							gender = raw_input("Person's gender [m/f]: ")
+							gender = gender.lower()
 							if (gender == "m" or gender == "f"):
 								break
 							else:
@@ -148,12 +150,13 @@ def tryRegisterOwner(VIN):
 						print "Is this information correct?"
 			
 						answer = raw_input("[Y/N] (q to quit): ")
-						if (answer == "Y"):
-							createPerson(SIN, name, height, weight, eyeColour, hairColour, addr, gender, birthday)
+						answer = answer.lower()
+						if (answer == "y"):
+							createPerson(SIN, name.lower(), height, weight, eyeColour.lower(), hairColour.lower(), addr.lower(), gender, birthday)
 							registerOwner(VIN, SIN)
 							ans = False
 							break
-						elif (answer == "N"):
+						elif (answer == "n"):
 							print "Please re-enter the information"
 							continue
 						elif (answer == "q"):
@@ -162,7 +165,7 @@ def tryRegisterOwner(VIN):
 						else:
 							print "Sorry, that's not a valid option!"
 
-				elif (answer == "N"):
+				elif (answer == "n"):
 					break
 				else:
 					print "Sorry, that's not a valid option!"
@@ -181,11 +184,12 @@ def tryRegisterOwner(VIN):
 				print "\nName: %s\nHeight: %d\nWeight: %d\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %d" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday)
 				print "Is this the person you're looking for?"
 				answer = raw_input("[Y/N]: ")
+				answer = answer.lower()
 
-				if (answer == "Y"):
+				if (answer == "y"):
 					registerOwner(VIN, SIN)
 					break
-				elif (answer == "N"):
+				elif (answer == "n"):
 					break
 				else:
 					print "Sorry, that's not a valid option!"
@@ -193,9 +197,10 @@ def tryRegisterOwner(VIN):
 		while(True):
 			print "Would you like to add another owner?"
 			answer = raw_input("[Y/N]: ")
-			if (answer == "Y"):
+			answer = answer.lower()
+			if (answer == "y"):
 				break
-			elif (answer == "N"):
+			elif (answer == "n"):
 				adding = False
 				break
 			else:
@@ -217,9 +222,10 @@ def startNVR():
 		if (vinInDB(VIN)):
 			print "Sorry, that VIN already exists in the database. Would you like to register a new owner instead?"
 			answer = raw_input("[Y/N]: ")
-			if (answer == "Y"):
+			answer = answer.lower()
+			if (answer == "y"):
 				tryRegisterOwner(VIN)
-			if (answer == "N"):
+			if (answer == "n"):
 				main()
 		else:
 			print "Let's fill in the vehicle's details..."
@@ -242,12 +248,13 @@ def startNVR():
 			while(True):
 				print "Would you like to add a vehicle owner?"
 				answer = raw_input("[Y/N]: ")
-				if (answer == "Y"):
+				answer = answer.lower()
+				if (answer == "y"):
 					tryRegisterOwner(VIN)
 					print "\nThank you for registering this vehicle."
 					print "Going back to the main menu...\n"
 					main()
-				if (answer == "N"):
+				if (answer == "n"):
 					print "\nThank you for registering this vehicle."
 					print "Going back to the main menu...\n"
 					main()
