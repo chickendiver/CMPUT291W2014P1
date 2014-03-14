@@ -1,6 +1,7 @@
 import sys
 import cx_Oracle
 
+#this is a comment
 def establishConnection():
 
 	#setup create table string
