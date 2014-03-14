@@ -2,7 +2,8 @@
 #	Note: Formatting of sql file is at the moment a little strange, see a2_setup_noComments.sql 
 #		for a good example of a working sql file
 
-#	BUGS:	create table file must not have comments
+#	Testing:	make sure create table and population works for all valid formats
+#	Mods:		let user input database credentials, and input file names
 
 
 #	Code: Chase McCarty
@@ -10,22 +11,24 @@
 import sys
 import cx_Oracle
 
-def establishConnection():
+
+# Establishes a Connection to the database, creates and populates tables
+#!# files and credentials are hard coded at the moment, this needs to be changed before release
+def establishConnection(tableFile, populationFile, username, password):
 	#connect to the database
 	try:
 		connection = cx_Oracle.connect('cmccarty/4cidm4n67@gwynne.cs.ualberta.ca:1521/CRS')
 		curs1 = connection.cursor()
 	except cx_Oracle.DatabaseError as exc:
 		error, = exc.args
-		print("Error connecting to database")
+		print(sys.stderr, "Error connecting to database")
 		print(sys.stderr, "Oracle code: ", error.code)
 		print(sys.stderr, "Oracle Message ", error.message)
 	
 	
-	#open table creation file and begin creation
-	# NOTE must use a file with no comments, no empty lines, and no ';' after last statement. 
-	# if unsure, check a2_setup_noComments.sql for formatting style
-	inputFile = open('a2_setup_noComments.sql')
+	# open table creation file and begin creation
+	# Files with comments appear to work but additional testing should be done
+	inputFile = open('a2_setup_new.sql')
 	createText = inputFile.read()
 	createStatements = createText.split(';')
 
@@ -35,7 +38,7 @@ def establishConnection():
 			curs1.execute(command)
 		except cx_Oracle.DatabaseError as exc:
 			error, = exc.args
-			print("Error in statement: ", command)
+			print(sys.stderr, "Error in statement: ", command)
 			print(sys.stderr, "Oracle code: ", error.code)
 			print(sys.stderr, "Oracle message: ", error.message)	
 	inputFile.close()
@@ -54,15 +57,36 @@ def establishConnection():
 			cursInsert.execute(command)
 		except cx_Oracle.DatabaseError as exc:
 			error, = exc.args
-			print("Error in statement: ", command)
+			print(sys.stderr, "Error in statement: ", command)
 			print(sys.stderr, "Oracle code: ", error.code)
 			print(sys.stderr, "Oracle message: ", error.message)
 	inputFile.close()
 	cursInsert.close()
 	connection.commit()
 
-	connection.close()
+	return connection
+
+# Returns statements that Puts a vehicle in the database
+#!# Does not perform checks for conflicting information already in database, or any checks for that matter (yet)
+def createVehicle(serialNum, make, model, year, color, vType):
+	statement = "INSERT INTO vehicle VALUES ('" + str(serialNum) + "', '" + str(make) + "', '" + str(model) + "', " + str(year) + ", '" + str(color) + "', " + str(vType) + ")" 
+	return statement
 
 
 if __name__ =="__main__":
-	establishConnection()
+	connection = establishConnection("placeholder.txt", "placeholder.txt", "username", "password")
+	curs = connection.cursor()
+
+	# this will be merged with mainMenu later
+	statement = (createVehicle("1e37y6", "Lamborghini", "Egoista", 2014, "blue", "0001"))
+	try:
+		curs.execute(statement)	
+	except cx_Oracle.DatabaseError as exc:
+		error, = exc.args
+		print(sys.stderr, "Error in statement: ", statement)
+		print(sys.stderr, "Oracle code: ", error.code)
+		print(sys.stderr, "Oracle message: ", error.message)
+	connection.commit()
+
+	connection.close()
+
