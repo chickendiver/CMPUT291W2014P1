@@ -104,15 +104,8 @@ def tryRegisterOwner(VIN):
 	## Prep from registering owner with VIN
 	adding = True
 	while (adding):
-		while (True):
-			SIN = input("Please enter the new owner's SIN: ")
-			try:
-				SIN = int(SIN)
-				break
-			except:
-				print("Please enter a number")
-				pass
-	
+		SIN = input("Please enter the new owner's SIN: ")
+		
 		## CREATE A PERSON IN THE DB
 		if (sinExists(SIN) == False):
 			print("Sorry, that SIN doesn't exist...")
