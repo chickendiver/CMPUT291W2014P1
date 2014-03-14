@@ -1,5 +1,6 @@
 import sys
 import datetime
+import cx_Oracle
 
 def vinInDB(VIN):
 	## Returns true if the given VIN is on the database
@@ -9,24 +10,31 @@ def vinInDB(VIN):
 def printVTypes():
 	## Take a list of vehicle types from the DB and print them
 	## Print misc list for now...
-	print """		 1. Sedan
+	print ("""		 1. Sedan
 		 2. SUV
 		 3. Two-Door
 		 4. Van
 		 5. Truck
-		 6. RV"""
+		 6. RV""")
 
 def isVType(vType):
 	## Check to see if vType is in the list of vehicle types on the DB
 	## Return true for now...
 	return True
 
-def createVehicle(make, model, year, color, vType):
-	## Put the vehicle on the DB
-	## Return True for success
-	## Return False for failure
-	## Return True for now...
-	return True
+def createVehicle(serialNum, make, model, year, color, vType):
+	statement = "INSERT INTO vehicle VALUES ('" + str(serialNum) + "', '" + str(make) + "', '" + str(model) + "', " + str(year) + ", '" + str(color) + "', " + str(vType) + ")" 
+	curs = connection.cursor()
+	try:
+		curs.execute(statement)	
+	except cx_Oracle.DatabaseError as exc:
+		error, = exc.args
+		print(sys.stderr, "Error Creating Vehicle statement: ", statement)
+		print(sys.stderr, "Oracle code: ", error.code)
+		print(sys.stderr, "Oracle message: ", error.message)
+
+	curs.close()
+	connection.commit()
 
 def sinExists(SIN):
 	## Checks to see if a SIN exists on the DB
@@ -92,15 +100,15 @@ def tryRegisterOwner(VIN):
 				SIN = int(SIN)
 				break
 			except:
-				print "Please enter a number"
+				print("Please enter a number")
 				pass
 	
 		## CREATE A PERSON IN THE DB
 		if (sinExists(SIN) == False):
-			print "Sorry, that SIN doesn't exist..."
+			print("Sorry, that SIN doesn't exist...")
 			ans = True
 			while (ans == True):
-				print "Would you like to create a new instance in the system?"
+				print ("Would you like to create a new instance in the system?")
 				answer = raw_input("[Y/N]: ")
 				answer = answer.lower()
 				if (answer == "y"):
@@ -113,7 +121,7 @@ def tryRegisterOwner(VIN):
 								height = int(height)
 								i = False
 							except:
-								print "Please enter a number"
+								print ("Please enter a number")
 								pass
 								
 							
@@ -124,7 +132,7 @@ def tryRegisterOwner(VIN):
 								weight = int(weight)
 								break
 							except:
-								print "Please enter a number"
+								print ("Please enter a number")
 								pass
 
 						eyeColour = raw_input("Person's eye colour: ")
@@ -136,42 +144,42 @@ def tryRegisterOwner(VIN):
 							if (gender == "m" or gender == "f"):
 								break
 							else:
-								print "Sorry, that's not a valid option!"
-								print "Please select from either 'm' or 'f'"
+								print ("Sorry, that's not a valid option!")
+								print ("Please select from either 'm' or 'f'")
 						while (True):
 							birthday = raw_input("Person's birthday [DD:MM:YYYY]: ")
 							try:
 								birthday = int(birthday)
 								break
 							except:
-								print "Please enter a number"
+								print ("Please enter a number")
 								continue
 
 						
-						print "\nName: %s\nHeight: %d\nWeight: %d\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %d" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday)
-						print "Is this information correct?"
+						print ("\nName: %s\nHeight: %d\nWeight: %d\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %d" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday))
+						print ("Is this information correct?")
 			
 						answer = raw_input("[Y/N] (q to quit): ")
 						answer = answer.lower()
 						if (answer == "y"):
 							createPerson(SIN, name.lower(), height, weight, eyeColour.lower(), hairColour.lower(), addr.lower(), gender, birthday)
-							print "Registering owner with SIN %d with vehicle with VIN %d" (SIN, VIN)
+							print ("Registering owner with SIN %d with vehicle with VIN %d" (SIN, VIN))
 							registerOwner(VIN, SIN)
 							ans = False
 							break
 						elif (answer == "n"):
-							print "Please re-enter the information:\n"
+							print ("Please re-enter the information:\n")
 							continue
 						elif (answer == "q"):
 							ans = False
 							break
 						else:
-							print "Sorry, that's not a valid option!"
+							print ("Sorry, that's not a valid option!")
 
 				elif (answer == "n"):
 					break
 				else:
-					print "Sorry, that's not a valid option!"
+					print ("Sorry, that's not a valid option!")
 			
 
 		## GET PERSON'S DATA FROM DB
@@ -186,22 +194,22 @@ def tryRegisterOwner(VIN):
 			birthday = DBgetBirthday(SIN)
 			
 			while(True):
-				print "\nName: %s\nHeight: %d\nWeight: %d\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %d" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday)
-				print "Is this the person you're looking for?"
+				print ("\nName: %s\nHeight: %d\nWeight: %d\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %d" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday))
+				print ("Is this the person you're looking for?")
 				answer = raw_input("[Y/N]: ")
 				answer = answer.lower()
 
 				if (answer == "y"):
-					print "Registering owner with SIN %d with vehicle with VIN %d" (SIN, VIN)
+					print ("Registering owner with SIN %d with vehicle with VIN %d" (SIN, VIN))
 					registerOwner(VIN, SIN)
 					break
 				elif (answer == "n"):
 					break
 				else:
-					print "Sorry, that's not a valid option!"
+					print ("Sorry, that's not a valid option!")
 		
 		while(True):
-			print "Would you like to add another owner?"
+			print ("Would you like to add another owner?")
 			answer = raw_input("[Y/N]: ")
 			answer = answer.lower()
 			if (answer == "y"):
@@ -210,11 +218,11 @@ def tryRegisterOwner(VIN):
 				adding = False
 				break
 			else:
-				print "Sorry, that's not a valid option!"
+				print ("Sorry, that's not a valid option!")
 
 ## On Main Menu Selection 1
 def startNVR():
-	print "New Vehicle Registration Selected"
+	print ("New Vehicle Registration Selected")
 	
 	while (True):
 		while (True):
@@ -223,10 +231,10 @@ def startNVR():
 				VIN = int(VIN)
 				break
 			except:
-				print "Please enter a number"
+				print ("Please enter a number")
 				pass
 		if (vinInDB(VIN)):
-			print "Sorry, that VIN already exists in the database. Would you like to register a new owner instead?"
+			print ("Sorry, that VIN already exists in the database. Would you like to register a new owner instead?")
 			answer = raw_input("[Y/N]: ")
 			answer = answer.lower()
 			if (answer == "y"):
@@ -234,38 +242,38 @@ def startNVR():
 			if (answer == "n"):
 				main()
 		else:
-			print "Let's fill in the vehicle's details..."
+			print ("Let's fill in the vehicle's details...")
 			make = raw_input("Vehicle make: ")
 			model = raw_input("Vehicle model: ")
 			year = raw_input("Vehicle year: ") ## Check this to make sure it's a valid year
 			color = raw_input("Vehicle colour: ")
-			print "Select a vehicle type from the list: "
+			print ("Select a vehicle type from the list: ")
 			printVTypes()
 			while (True):
 				vType = raw_input("Select a vehicle type from the list: ")
 				if (isVType(vType)):
 					break
 				else:
-					print "That is not a valid vehicle type..."
+					print ("That is not a valid vehicle type...")
 					continue
 		
 			createVehicle(make, model, year, color, vType)
 			
 			while(True):
-				print "Would you like to add a vehicle owner?"
+				print ("Would you like to add a vehicle owner?")
 				answer = raw_input("[Y/N]: ")
 				answer = answer.lower()
 				if (answer == "y"):
 					tryRegisterOwner(VIN)
-					print "\nThank you for registering this vehicle."
-					print "Going back to the main menu...\n"
+					print ("\nThank you for registering this vehicle.")
+					print ("Going back to the main menu...\n")
 					main()
 				if (answer == "n"):
-					print "\nThank you for registering this vehicle."
-					print "Going back to the main menu...\n"
+					print ("\nThank you for registering this vehicle.")
+					print ("Going back to the main menu...\n")
 					main()
 				else:
-					print "Sorry, that's not a valid option!"
+					print ("Sorry, that's not a valid option!")
 					continue
 		
 		
@@ -273,26 +281,26 @@ def startNVR():
 	
 
 def startAT():
-	print "Auto Transaction Selected"
+	print ("Auto Transaction Selected")
 
 def startDLR():
-	print "Driver License Registration Selected"
+	print ("Driver License Registration Selected")
 
 def startVR():
-	print "Violation Record Selected"
+	print ("Violation Record Selected")
 
 def startSE():
-	print "Search Engine Selected"
+	print ("Search Engine Selected")
 
 
 def main():
-	print """PLEASE SELECT FROM THE FOLLOWING OPTIONS:
+	print ("""PLEASE SELECT FROM THE FOLLOWING OPTIONS:
 	      1. New Vehicle Registration
 	      2. Auto Transaction
 	      3. Driver License Registration
 	      4. Violation Record
 	      5. Search Engine
-	      6. Exit"""
+	      6. Exit""")
 
 	var = 0
 
@@ -314,18 +322,99 @@ def main():
 			startSE()
 	
 		elif (var == "6"):
-			print "Exiting..."
+			print ("Exiting...")
 
 		else:
-			print "Sorry, that's not a valid option!"
+			print ("Sorry, that's not a valid option!")
 	
 
 	sys.exit()
+###################################################################################################
+#
+#                                                                                  ,---.,---.,---.    
+# ,-----.,--.                           ,--.           ,-----.          ,--.       |   ||   ||   |    
+#'  .--./|  ,---.  ,--,--. ,---.  ,---. |  |,---.     '  .--./ ,---.  ,-|  | ,---. |  .'|  .'|  .'    
+#|  |    |  .-.  |' ,-.  |(  .-' | .-. :`-'(  .-'     |  |    | .-. |' .-. || .-. :|  | |  | |  |     
+#'  '--'\|  | |  |\ '-'  |.-'  `)\   --.   .-'  `)    '  '--'\' '-' '\ `-' |\   --.`--' `--' `--'     
+# `-----'`--' `--' `--`--'`----'  `----'   `----'      `-----' `---'  `---'  `----'.--. .--. .--.     
+#                                                                                  '--' '--' '--'     
+##################################################################################################
 
+# Returns a connection with the database
+def establishConnection(username, password):
+	connectionString = (str(username) + "/" + str(password) + "@gwynne.cs.ualberta.ca:1521/CRS")
+	connection = None 
+	try:
+		connection = cx_Oracle.connect(connectionString)
+		
+	except cx_Oracle.DatabaseError as exc:
+		error, = exc.args
+		print(sys.stderr, "Error connecting to database")
+		print(sys.stderr, "Oracle code: ", error.code)
+		print(sys.stderr, "Oracle Message ", error.message)
 
+	if connection:
+		return connection
+	else:
+		print(sys.stderr, "Error establishing connection")
+		return 0
 
-if (__name__ == "__main__"):
-	main()
+# Create initial database tables from inputted .sql file
+#!# any errors returned appear to be due to file input at this point and do not affect implemenation
+def createTables(inputFile):
+	inputFile = open(inputFile)
+	createStatements = inputFile.read()
+	createStatements = createStatements.split(';')
+
+	curs = connection.cursor()
+
+	for command in createStatements:
+		try:
+			curs.execute(command)
+		except cx_Oracle.DatabaseError as exc:
+			error, = exc.args
+			if len(command) > 1:		#if command isnt just a newline character
+				print(sys.stderr, "Error in statement: ", command)
+				print(sys.stderr, "Oracle code: ", error.code)
+				print(sys.stderr, "Oracle message: ", error.message)
+
+	inputFile.close()
+	curs.close()
+	connection.commit()
+
+# Populate created tables with inputted .sql file
+#!# any errors returned appear to be due to file input at this point and do not affect implemenation
+def populateTables(inputFile):
+	inputFile = open(inputFile)
+	populateStatements = inputFile.read()
+	populateStatements = populateStatements.split(';')
+
+	cursInsert = connection.cursor()
+
+	for command in populateStatements:
+		try:
+			cursInsert.execute(command)
+		except cx_Oracle.DatabaseError as exc:
+			error, = exc.args
+			if len(command) > 1:		#if command isnt just a newline character
+				print(sys.stderr, "Error in statement: ", command)
+				print(sys.stderr, "Oracle code: ", error.code)
+				print(sys.stderr, "Oracle message: ", error.message)
+	inputFile.close()
+	cursInsert.close()
+	connection.commit()
+
+#!# a little clusterd right now, maybe consider a delegation function to clean up main
+if __name__ =="__main__":
+	connection = establishConnection('cmccarty', '4cidm4n67')
+	createTables("a2_setup_new.sql")
+	populateTables("a2-data.sql")
+
+	# this will be merged with mainMenu later
+	createVehicle("1e37y6", "Lamborghini", "Hurican", 2014, "blue", "0001")
+	#!# Run the main code here, like it says above this should all be refactored for prettiness anyway
+	#main()
+	connection.close()
 
 
 
