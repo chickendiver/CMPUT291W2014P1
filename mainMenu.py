@@ -274,6 +274,7 @@ def startNVR():
 
 def startAT():
 	print "Auto Transaction Selected"
+	sellerID = raw_input("[Y/N]: ")
 
 def startDLR():
 	print "Driver License Registration Selected"

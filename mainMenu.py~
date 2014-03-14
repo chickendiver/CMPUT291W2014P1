@@ -160,7 +160,7 @@ def tryRegisterOwner(VIN):
 							ans = False
 							break
 						elif (answer == "n"):
-							print "Please re-enter the information"
+							print "Please re-enter the information:\n"
 							continue
 						elif (answer == "q"):
 							ans = False
