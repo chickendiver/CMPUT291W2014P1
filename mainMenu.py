@@ -5,14 +5,24 @@ import cx_Oracle
 def vinInDB(VIN):
 	## Returns true if the given VIN is on the database
 	## Returns false for now...
+	curs = connection.cursor()
+	statement = "select v.serial_no from vehicle v where v.serial_no = '" + str(VIN) + "'"
+	curs.execute(statement)
+	rows = curs.fetchall()
+
+	if len(rows) > 0:
+		curs.close()
+		return True
+	curs.close()
 	return False
+	
 
 def printVTypes():
 	## Take a list of vehicle types from the DB and print them
 	## Print misc list for now...
 	print ("""		 1. Sedan
 		 2. SUV
-		 3. Two-Door
+		 3. Coupe
 		 4. Van
 		 5. Truck
 		 6. RV""")
@@ -33,8 +43,8 @@ def createVehicle(serialNum, make, model, year, color, vType):
 		print(sys.stderr, "Oracle code: ", error.code)
 		print(sys.stderr, "Oracle message: ", error.message)
 
-	curs.close()
 	connection.commit()
+	curs.close()
 
 def sinExists(SIN):
 	## Checks to see if a SIN exists on the DB
@@ -229,11 +239,11 @@ def startNVR():
 		VIN = input("Please enter the new vehicle's serial number: ")
 			
 		if (vinInDB(VIN)):
-			print ("Sorry, that VIN already exists in the database. Would you like to register a new owner instead?")
+			print ("Sorry, that VIN already exists in the database. Would you like to try again?")
 			answer = input("[Y/N]: ")
 			answer = answer.lower()
 			if (answer == "y"):
-				tryRegisterOwner(VIN)
+				continue
 			if (answer == "n"):
 				main()
 		else:
@@ -403,8 +413,8 @@ def populateTables(inputFile):
 #!# a little clusterd right now, maybe consider a delegation function to clean up main
 if __name__ =="__main__":
 	connection = establishConnection('cmccarty', '4cidm4n67')
-	createTables("a2_setup_new.sql")
-	populateTables("a2-data.sql")
+	#createTables("a2_setup_new.sql")
+	#populateTables("a2-data.sql")
 
 	# this will be merged with mainMenu later
 	#createVehicle("1e37y6", "Lamborghini", "Hurican", 2014, "blue", "0001")

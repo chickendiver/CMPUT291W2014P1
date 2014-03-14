@@ -1,0 +1,5 @@
+notes:
+	write vinInDB function
+		-	give user second chance to enter vin if first one fails
+
+	write tryRegisterOwner function
