@@ -1,0 +1,5 @@
+notes:
+	should serialNum be an int? (changed that)
+
+	write vinINDB function
+	write tryRegisterOwner function
