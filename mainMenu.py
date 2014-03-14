@@ -243,6 +243,7 @@ def startNVR():
 				main()
 		else:
 			print ("Let's fill in the vehicle's details...")
+			serialNum = VIN
 			make = raw_input("Vehicle make: ")
 			model = raw_input("Vehicle model: ")
 			year = raw_input("Vehicle year: ") ## Check this to make sure it's a valid year
@@ -257,7 +258,7 @@ def startNVR():
 					print ("That is not a valid vehicle type...")
 					continue
 		
-			createVehicle(make, model, year, color, vType)
+			createVehicle(serialNum, make, model, year, color, vType)
 			
 			while(True):
 				print ("Would you like to add a vehicle owner?")
@@ -411,9 +412,9 @@ if __name__ =="__main__":
 	populateTables("a2-data.sql")
 
 	# this will be merged with mainMenu later
-	createVehicle("1e37y6", "Lamborghini", "Hurican", 2014, "blue", "0001")
+	#createVehicle("1e37y6", "Lamborghini", "Hurican", 2014, "blue", "0001")
 	#!# Run the main code here, like it says above this should all be refactored for prettiness anyway
-	#main()
+	main()
 	connection.close()
 
 
