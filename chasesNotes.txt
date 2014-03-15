@@ -1,6 +1,13 @@
 notes:
+
 	write tryRegisterOwner function
 	+	Change sin to be char
-	-	write sinExists function
-	-	write create createPerson
+	+	write sinExists function
+	+	write create createPerson
+		+ hight isnt an int
+		+ weight isnt an int
+		+ fix date prompt for correct format
+		+ date isnt an int
+
 	-	write registerOwner
+
