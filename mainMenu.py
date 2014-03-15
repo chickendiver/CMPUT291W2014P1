@@ -316,16 +316,16 @@ def startAT():
 			
 			restartBool = False
 			while(True):
-				print ("\nMake: %s\nModel: %d\nYear: %d\nColor: %s\n" % (make, model, year, colour))
+				print ("\nMake: %s\nModel: %s\nYear: %d\nColor: %s\n" % (make, model, year, color))
 				print ("Is this the vehicle you're looking for?")
-				answer = input("[Y/N]: ")
-				answer = answer.lower()
+				inputAns = input("[Y/N]: ")
+				inputAns = inputAns.lower()
 
-				if (answer == "y"):
-					restartBool == False
+				if (inputAns == "y"):
+					restartBool = False
 					break
-				elif (answer == "n"):
-					restartBool == True
+				elif (inputAns == "n"):
+					restartBool = True
 					break
 				else:
 					print ("Sorry, that's not a valid option!")
@@ -373,24 +373,28 @@ def startAT():
 							answer = input("[Y/N] (q to quit): ")
 							answer = answer.lower()
 							if (answer == "y"):
-								createPerson(SIN, name.lower(), height, weight, eyeColour.lower(), hairColour.lower(), addr.lower(), gender, birthday)
+								createPerson(sellerSIN, name.lower(), height, weight, eyeColour.lower(), hairColour.lower(), addr.lower(), gender, birthday)
 								ans = False
 								sellerBool = False
 								break
 							elif (answer == "n"):
 								print ("Please re-enter the information:\n")
+								ans = True
+								sellerBool = True
 								continue
 							elif (answer == "q"):
-								ans = False
-								sellerBool = False
-								break
+								main()
 							else:
 								print ("Sorry, that's not a valid option!")
 
 					elif (answer == "n"):
+						sellerBool = True
 						break
 					else:
 						print ("Sorry, that's not a valid option!")
+
+				if (sellerBool):
+					continue
 			
 
 			## GET PERSON'S DATA FROM DB
@@ -419,6 +423,10 @@ def startAT():
 					else:
 						print ("Sorry, that's not a valid option!")
 
+
+				if (sellerBool):
+					continue
+
 			## Check to see if the selected sellerSIN owns the VIN
 
 			if (checkSellerOwnsVehicle(sellerSIN, VIN) == False):
@@ -426,6 +434,8 @@ def startAT():
 				continue
 			else:
 				break
+
+
 
 		## Get the buyer's information...
 		buyerBool = True
@@ -468,7 +478,7 @@ def startAT():
 							answer = input("[Y/N] (q to quit): ")
 							answer = answer.lower()
 							if (answer == "y"):
-								createPerson(SIN, name.lower(), height, weight, eyeColour.lower(), hairColour.lower(), addr.lower(), gender, birthday)
+								createPerson(buyerSIN, name.lower(), height, weight, eyeColour.lower(), hairColour.lower(), addr.lower(), gender, birthday)
 								ans = False
 								buyerBool = False
 								break
@@ -476,9 +486,7 @@ def startAT():
 								print ("Please re-enter the information:\n")
 								continue
 							elif (answer == "q"):
-								ans = False
-								buyerBool = False
-								break
+								main()
 							else:
 								print ("Sorry, that's not a valid option!")
 
@@ -486,6 +494,9 @@ def startAT():
 						break
 					else:
 						print ("Sorry, that's not a valid option!")
+
+				if (buyerBool):
+					continue
 			
 
 			## GET PERSON'S DATA FROM DB
@@ -513,9 +524,70 @@ def startAT():
 						break
 					else:
 						print ("Sorry, that's not a valid option!")
+			
+			if (buyerBool):
+				continue
+			else:
+				break
 	
 		## Ask for the vehicle price
+		vehPrice = input("What is the selling price of this vehicle? ")
+
+		removeVehicleOwners(VIN)
 		
+		addOwner(VIN, buyerSIN)
+
+		transactionID = generateID()
+		
+		createAutoSale(transactionID, VIN, sellerSIN, buyerSIN, vehPrice)
+
+		print("Thank you for reporting this sale!")
+		print("Returning to the main menu...\n\n")
+		main()
+
+def DBgetVehicleMake(VIN):
+	## Returns the make of vehicle at VIN
+	return "Car"
+def DBgetVehicleModel(VIN):
+	## Returns the model of vehicle at VIN	
+	return "A Good one"
+def DBgetVehicleYear(VIN):
+	## Returns the year of the vehicle at VIN
+	return 1993
+def DBgetVehicleColor(VIN):
+	## Returns the color of the vehicle at VIN
+	return "Blue"
+
+def createVehicle(serialNum, make, model, year, color, vType):
+	##Creates a new row in the vehicle table with the passed values
+	pass
+
+def createAutoSale(transactionID, VIN, sellerSIN, buyerSIN, vehPrice):
+	## Creates a row in the auto_sale table with all the values above
+	## The current date will be put in for the s_date variable
+	print ("Auto sale created...")
+
+def generateID():
+	##Creates a random number to be used for auto sale transaction 
+	## Returns an integer	
+	return 1234
+	
+def addOwner(VIN, buyerSIN):
+	## Adds an owner to the vehicle at VIN as a primary owner...
+	## Returns nothing
+	pass
+
+def removeVehicleOwners(VIN):
+	## Removes all owners associated with the vehicle at the VIN, even if there are none available
+	## Returns nothing
+	pass
+
+def checkSellerOwnsVehicle(sellerSIN, VIN):
+	## Checks to see if sellerSIN is associated with the VIN
+	## Returns True or False
+	return True
+
+
 
 			
 
