@@ -197,7 +197,7 @@ def tryRegisterOwner(VIN):
 			birthday = DBgetBirthday(SIN)
 			
 			while(True):
-				print ("\nName: %s\nHeight: %d\nWeight: %d\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %d" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday))
+				print ("\nName: %s\nHeight: %d cm\nWeight: %d lb\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %d" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday))
 				print ("Is this the person you're looking for?")
 				answer = input("[Y/N]: ")
 				answer = answer.lower()
@@ -281,6 +281,19 @@ def startNVR():
 
 def startAT():
 	print ("Auto Transaction Selected")
+	while (True):
+
+		VIN = input("Please enter the new vehicle's serial number: ")
+			
+		if (!vinInDB(VIN)):
+			print ("Sorry, that VIN doesn't exist. Would you like to create a new one?")
+			answer = input("[Y/N]: ")
+			answer = answer.lower()
+			if (answer == "y"):
+				continue
+			if (answer == "n"):
+				main()
+		else:
 
 def startDLR():
 	print ("Driver License Registration Selected")

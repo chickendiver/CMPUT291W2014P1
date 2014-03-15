@@ -281,6 +281,36 @@ def startNVR():
 
 def startAT():
 	print ("Auto Transaction Selected")
+	while (True):
+
+		VIN = input("Please enter the new vehicle's serial number: ")
+			
+		if (!vinInDB(VIN)):
+			print ("Sorry, that VIN doesn't exist. Would you like to create a new one?")
+			answer = input("[Y/N]: ")
+			answer = answer.lower()
+			if (answer == "y"):
+				print ("Let's fill in the vehicle's details...")
+				serialNum = VIN
+				make = input("Vehicle make: ")
+				model = input("Vehicle model: ")
+				year = input("Vehicle year: ") ## Check this to make sure it's a valid year
+				color = input("Vehicle colour: ")
+				print ("Select a vehicle type from the list: ")
+				printVTypes()
+				while (True):
+					vType = input("Select a vehicle type from the list: ")
+					if (isVType(vType)):
+						break
+					else:
+						print ("That is not a valid vehicle type...")
+						continue
+		
+			createVehicle(serialNum, make, model, year, color, vType)
+			if (answer == "n"):
+				print ("Let's try this again, then...")
+				continue
+		else:
 
 def startDLR():
 	print ("Driver License Registration Selected")
