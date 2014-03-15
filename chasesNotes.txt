@@ -1,0 +1,6 @@
+notes:
+	write tryRegisterOwner function
+	+	Change sin to be char
+	-	write sinExists function
+	-	write create createPerson
+	-	write registerOwner
