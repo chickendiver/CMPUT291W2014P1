@@ -283,7 +283,7 @@ def startAT():
 
 		VIN = input("Please enter the new vehicle's serial number: ")
 			
-		if (!vinInDB(VIN)):
+		if (vinInDB(VIN) == False):
 			print ("Sorry, that VIN doesn't exist. Would you like to create a new one?")
 			answer = input("[Y/N]: ")
 			answer = answer.lower()
@@ -304,11 +304,133 @@ def startAT():
 						print ("That is not a valid vehicle type...")
 						continue
 		
-			createVehicle(serialNum, make, model, year, color, vType)
+				createVehicle(serialNum, make, model, year, color, vType)
 			if (answer == "n"):
 				print ("Let's try this again, then...")
 				continue
 		else:
+			make = DBgetVehicleMake(VIN)
+			model = DBgetVehicleModel(VIN)
+			year = DBgetVehicleYear(VIN)
+			color = DBgetVehicleColor(VIN)
+			
+			restartBool = False
+			while(True):
+				print ("\nMake: %s\nModel: %d\nYear: %d\nColor: %s\n" % (make, model, year, colour))
+				print ("Is this the vehicle you're looking for?")
+				answer = input("[Y/N]: ")
+				answer = answer.lower()
+
+				if (answer == "y"):
+					restartBool == False
+					break
+				elif (answer == "n"):
+					restartBool == True
+					break
+				else:
+					print ("Sorry, that's not a valid option!")
+
+			if (restartBool == True):
+				continue
+
+		sellerBool = True
+		while(sellerBool == True):
+			## COPIED DIRECTLY FROM ABOVE CODE...
+			sellerSIN = input("Please enter the seller's SIN: ")
+		
+			## CREATE A PERSON IN THE DB
+			if (sinExists(sellerSIN) == False):
+				print("Sorry, that SIN doesn't exist...")
+				ans = True
+				while (ans == True):
+					print ("Would you like to create a new instance in the system?")
+					answer = input("[Y/N]: ")
+					answer = answer.lower()
+					if (answer == "y"):
+						while (True):
+							name = input("Person's name: ")
+							i = True
+							height = input("Person's height: ")
+							
+							weight = input("Person's weight: ")
+
+							eyeColour = input("Person's eye colour: ")
+							hairColour = input("Person's hair colour: ")
+							addr = input("Person's address: ")
+							while (True):
+								gender = input("Person's gender [m/f]: ")
+								gender = gender.lower()
+								if (gender == "m" or gender == "f"):
+									break
+								else:
+									print ("Sorry, that's not a valid option!")
+									print ("Please select from either 'm' or 'f'")
+							birthday = input("Person's birthday [DD-MON-YY]: ")
+						
+							print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday))
+							print ("Is this information correct?")
+			
+							answer = input("[Y/N] (q to quit): ")
+							answer = answer.lower()
+							if (answer == "y"):
+								createPerson(SIN, name.lower(), height, weight, eyeColour.lower(), hairColour.lower(), addr.lower(), gender, birthday)
+								ans = False
+								sellerBool = False
+								break
+							elif (answer == "n"):
+								print ("Please re-enter the information:\n")
+								continue
+							elif (answer == "q"):
+								ans = False
+								sellerBool = False
+								break
+							else:
+								print ("Sorry, that's not a valid option!")
+
+					elif (answer == "n"):
+						break
+					else:
+						print ("Sorry, that's not a valid option!")
+			
+
+			## GET PERSON'S DATA FROM DB
+			else:
+				sellerName = DBgetPersonName(sellerSIN)
+				sellerHeight = DBgetPersonHeight(sellerSIN)
+				sellerWeight = DBgetPersonWeight(sellerSIN)
+				sellerEyeColour = DBgetPersonEyeColour(sellerSIN)
+				sellerHairColour = DBgetPersonHairColour(sellerSIN)
+				sellerAddr = DBgetPersonAddress(sellerSIN)
+				sellerGender = DBgetGender(sellerSIN)
+				sellerBirthday = DBgetBirthday(sellerSIN)
+			
+				while(True):
+					print ("\nName: %s\nHeight: %d\nWeight: %d\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %d" % (sellerName, sellerHeight, sellerWeight, sellerEyeColour, sellerHairColour, sellerAddr, sellerGender, sellerBirthday))
+					print ("Is this the person you're looking for?")
+					answer = input("[Y/N]: ")
+					answer = answer.lower()
+
+					if (answer == "y"):
+						sellerBool = False
+						break
+					elif (answer == "n"):
+						sellerBool = True
+						break
+					else:
+						print ("Sorry, that's not a valid option!")
+
+			## Check to see if the selected sellerSIN is in the DB...
+
+			if (checkSellerOwnsVehicle(sellerSIN, VIN) == False):
+				print("Sorry, that person doesn't own this vehicle.")
+				continue
+			else:
+				break
+		
+
+	
+
+			
 
 def startDLR():
 	print ("Driver License Registration Selected")
