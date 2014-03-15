@@ -419,7 +419,7 @@ def startAT():
 					else:
 						print ("Sorry, that's not a valid option!")
 
-			## Check to see if the selected sellerSIN is in the DB...
+			## Check to see if the selected sellerSIN owns the VIN
 
 			if (checkSellerOwnsVehicle(sellerSIN, VIN) == False):
 				print("Sorry, that person doesn't own this vehicle.")
@@ -427,7 +427,94 @@ def startAT():
 			else:
 				break
 
+		## Get the buyer's information...
+		buyerBool = True
+		while(buyerBool == True):
+			## COPIED DIRECTLY FROM ABOVE CODE...
+			buyerSIN = input("Please enter the buyer's SIN: ")
+		
+			## CREATE A PERSON IN THE DB
+			if (sinExists(buyerSIN) == False):
+				print("Sorry, that SIN doesn't exist...")
+				ans = True
+				while (ans == True):
+					print ("Would you like to create a new instance in the system?")
+					answer = input("[Y/N]: ")
+					answer = answer.lower()
+					if (answer == "y"):
+						while (True):
+							name = input("Person's name: ")
+							i = True
+							height = input("Person's height: ")
+							
+							weight = input("Person's weight: ")
+
+							eyeColour = input("Person's eye colour: ")
+							hairColour = input("Person's hair colour: ")
+							addr = input("Person's address: ")
+							while (True):
+								gender = input("Person's gender [m/f]: ")
+								gender = gender.lower()
+								if (gender == "m" or gender == "f"):
+									break
+								else:
+									print ("Sorry, that's not a valid option!")
+									print ("Please select from either 'm' or 'f'")
+							birthday = input("Person's birthday [DD-MON-YY]: ")
+						
+							print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday))
+							print ("Is this information correct?")
+			
+							answer = input("[Y/N] (q to quit): ")
+							answer = answer.lower()
+							if (answer == "y"):
+								createPerson(SIN, name.lower(), height, weight, eyeColour.lower(), hairColour.lower(), addr.lower(), gender, birthday)
+								ans = False
+								buyerBool = False
+								break
+							elif (answer == "n"):
+								print ("Please re-enter the information:\n")
+								continue
+							elif (answer == "q"):
+								ans = False
+								buyerBool = False
+								break
+							else:
+								print ("Sorry, that's not a valid option!")
+
+					elif (answer == "n"):
+						break
+					else:
+						print ("Sorry, that's not a valid option!")
+			
+
+			## GET PERSON'S DATA FROM DB
+			else:
+				buyerName = DBgetPersonName(buyerSIN)
+				buyerHeight = DBgetPersonHeight(buyerSIN)
+				buyerWeight = DBgetPersonWeight(buyerSIN)
+				buyerEyeColour = DBgetPersonEyeColour(buyerSIN)
+				buyerHairColour = DBgetPersonHairColour(buyerSIN)
+				buyerAddr = DBgetPersonAddress(buyerSIN)
+				buyerGender = DBgetGender(buyerSIN)
+				buyerBirthday = DBgetBirthday(buyerSIN)
+			
+				while(True):
+					print ("\nName: %s\nHeight: %d\nWeight: %d\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %d" % (buyerName, buyerHeight, buyerWeight, buyerEyeColour, buyerHairColour, buyerAddr, buyerGender, buyerBirthday))
+					print ("Is this the person you're looking for?")
+					answer = input("[Y/N]: ")
+					answer = answer.lower()
+
+					if (answer == "y"):
+						buyerBool = False
+						break
+					elif (answer == "n"):
+						buyerBool = True
+						break
+					else:
+						print ("Sorry, that's not a valid option!")
 	
+		## Ask for the vehicle price
 
 			
 
