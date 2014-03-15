@@ -49,7 +49,17 @@ def createVehicle(serialNum, make, model, year, color, vType):
 def sinExists(SIN):
 	## Checks to see if a SIN exists on the DB
 	## Returns True for now..
-	return True
+	curs = connection.cursor()
+	statement = "select p.sin from people p where p.sin = '" + str(SIN) + "'"
+	curs.execute(statement)
+	rows = curs.fetchall()
+
+	if len(rows) > 0:
+		curs.close()
+		return True
+	curs.close()
+	return False
+
 
 def DBgetPersonName(SIN):
 	## Returns person at SIN's name
@@ -97,7 +107,19 @@ def registerOwner(VIN, SIN):
 
 def createPerson(SIN, name, height, weight, eyeColour, hairColour, addr, gender, birthday):
 	## Creates a person on the database
-	return True
+	curs = connection.cursor()
+	statement = ("INSERT INTO people VALUES('" + str(SIN) + "', '" + str(name) + "', " + str(height)+ ", " + str(weight)+ ", '" + str(eyeColour) + "', '" + str(hairColour) + "', '" + str(addr) + "', '" + str(gender) + "', '" + str(birthday) + "')")
+	try:
+		curs.execute(statement)
+	except cx_Oracle.DatabaseError as exc:
+		error, = exc.args
+		print(sys.stderr, "Error Creating Person: ", statement)
+		print(sys.stderr, "Oracle code: ", error.code)
+		print(sys.stderr, "Oracle message: ", error.message)
+
+	connection.commit()
+	curs.close()
+	
 	
 
 def tryRegisterOwner(VIN):
@@ -118,25 +140,9 @@ def tryRegisterOwner(VIN):
 					while (True):
 						name = input("Person's name: ")
 						i = True
-						while (i == True):
-							height = input("Person's height in cm: ")
-							try:
-								height = int(height)
-								i = False
-							except:
-								print ("Please enter a number")
-								pass
-								
+						height = input("Person's height: ")
 							
-						
-						while (True):
-							weight = input("Person's weight in pounds: ")
-							try:
-								weight = int(weight)
-								break
-							except:
-								print ("Please enter a number")
-								pass
+						weight = input("Person's weight: ")
 
 						eyeColour = input("Person's eye colour: ")
 						hairColour = input("Person's hair colour: ")
@@ -149,24 +155,16 @@ def tryRegisterOwner(VIN):
 							else:
 								print ("Sorry, that's not a valid option!")
 								print ("Please select from either 'm' or 'f'")
-						while (True):
-							birthday = input("Person's birthday [DD:MM:YYYY]: ")
-							try:
-								birthday = int(birthday)
-								break
-							except:
-								print ("Please enter a number")
-								continue
-
+						birthday = input("Person's birthday [DD-MON-YY]: ")
 						
-						print ("\nName: %s\nHeight: %d\nWeight: %d\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %d" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday))
+						print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday))
 						print ("Is this information correct?")
 			
 						answer = input("[Y/N] (q to quit): ")
 						answer = answer.lower()
 						if (answer == "y"):
 							createPerson(SIN, name.lower(), height, weight, eyeColour.lower(), hairColour.lower(), addr.lower(), gender, birthday)
-							print ("Registering owner with SIN %d with vehicle with VIN %d" (SIN, VIN))
+							print ("Registering owner with SIN %s with vehicle with VIN %s" (SIN, VIN))
 							registerOwner(VIN, SIN)
 							ans = False
 							break
@@ -197,7 +195,7 @@ def tryRegisterOwner(VIN):
 			birthday = DBgetBirthday(SIN)
 			
 			while(True):
-				print ("\nName: %s\nHeight: %d cm\nWeight: %d lb\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %d" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday))
+				print ("\nName: %s\nHeight: %d\nWeight: %d\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %d" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday))
 				print ("Is this the person you're looking for?")
 				answer = input("[Y/N]: ")
 				answer = answer.lower()
