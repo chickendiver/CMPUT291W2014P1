@@ -33,8 +33,12 @@ def isVType(vType):
 	return True
 
 def createVehicle(serialNum, make, model, year, color, vType):
-	statement = "INSERT INTO vehicle VALUES ('" + str(serialNum) + "', '" + str(make) + "', '" + str(model) + "', " + str(year) + ", '" + str(color) + "', " + str(vType) + ")" 
+	#statement = "INSERT INTO vehicle VALUES ('" + str(serialNum) + "', '" + str(make) + "', '" + str(model) + "', " + str(year) + ", '" + str(color) + "', " + str(vType) + ")" 
+	statement = "INSERT INTO vehicle VALUES ('%s', '%s', '%s', %s, '%s', %s)" % (serialNum, make, model, year, color, vType)	
 	curs = connection.cursor()
+
+	print("Creating vehicle now")
+
 	try:
 		curs.execute(statement)	
 	except cx_Oracle.DatabaseError as exc:
@@ -63,46 +67,104 @@ def sinExists(SIN):
 
 def DBgetPersonName(SIN):
 	## Returns person at SIN's name
-	## Return Bob for now...
-	return "Bob"
+	curs = connection.cursor()
+	statement = "select p.name from people p where p.sin = '%s'" % (SIN)
+	curs.execute(statement)
+	rows = curs.fetchall()
+
+	curs.close()
+	return rows[0]
 
 def DBgetPersonHeight(SIN):
 	## Returns person at SIN's height
-	## Return 156cm for now...
-	return 156
+	curs = connection.cursor()
+	statement = "select p.height from people p where p.sin = '%s'" % (SIN)
+	curs.execute(statement)
+	rows = curs.fetchall()
+
+	curs.close()
+	return rows[0]
 
 def DBgetPersonWeight(SIN):
 	## Returns person at SIN's weight
-	## Return 140lb for now...
-	return 150
+	curs = connection.cursor()
+	statement = "select p.weight from people p where p.sin = '%s'" % (SIN)
+	curs.execute(statement)
+	rows = curs.fetchall()
+
+	curs.close()
+	return rows[0]
 
 def DBgetPersonEyeColour(SIN):
 	## Returns person at SIN's eye colour
-	## Return blue for now...
-	return "blue"
+	curs = connection.cursor()
+	statement = "select p.eyecolor from people p where p.sin = '%s'" % (SIN)
+	curs.execute(statement)
+	rows = curs.fetchall()
+
+	curs.close()
+	return rows[0]
 
 def DBgetPersonHairColour(SIN):
 	## Returns person at SIN's hair colour
-	## Return brown for now...
-	return "brown"
+	curs = connection.cursor()
+	statement = "select p.haircolor from people p where p.sin = '%s'" % (SIN)
+	curs.execute(statement)
+	rows = curs.fetchall()
+
+	curs.close()
+	return rows[0]
 
 def DBgetPersonAddress(SIN):
 	## Returns person at SIN's address
-	## Return 123 Marlboro Road for now...
-	return "123 Marlboro Road"
+	curs = connection.cursor()
+	statement = "select p.addr from people p where p.sin = '%s'" % (SIN)
+	curs.execute(statement)
+	rows = curs.fetchall()
+
+	curs.close()
+	return rows[0]
 
 def DBgetGender(SIN):
 	## Returns person at SIN's gender
-	## Return m for now...
-	return "m"
+	curs = connection.cursor()
+	statement = "select p.gender from people p where p.sin = '%s'" % (SIN)
+	curs.execute(statement)
+	rows = curs.fetchall()
+
+	curs.close()
+	return rows[0]
 
 def DBgetBirthday(SIN):
 	## Returns person at SIN's birthday
-	## Return 0 for now
-	return 0
+	curs = connection.cursor()
+	statement = "select p.birthday from people p where p.sin = '%s'" % (SIN)
+	curs.execute(statement)
+	rows = curs.fetchall()
+
+	curs.close()
+	return rows[0]
 
 def registerOwner(VIN, SIN):
 	## Registers the owner with the VIN on the database
+	# Add row to owners table with values (SIN, VIN, y/n)
+
+	curs = connection.cursor()
+	statement = ("INSERT INTO owner VALUES('%s', '%s', 'y')" % (SIN, VIN))
+	try:
+		curs.execute(statement)
+	except cx_Oracle.DatabaseError as exc:
+		error, = exc.args
+		print(sys.stderr, "Error Regostering owner: ", statement)
+		print(sys.stderr, "Oracle code: ", error.code)
+		print(sys.stderr, "Oracle message: ", error.message)
+
+	connection.commit()
+	curs.close()
+
+
+
+
 	return True
 
 def createPerson(SIN, name, height, weight, eyeColour, hairColour, addr, gender, birthday):
@@ -136,7 +198,7 @@ def tryRegisterOwner(VIN):
 				print ("Would you like to create a new instance in the system?")
 				answer = input("[Y/N]: ")
 				answer = answer.lower()
-				if (answer == "y"):
+				if (answer == "y" or answer == ""):
 					while (True):
 						name = input("Person's name: ")
 						i = True
@@ -162,9 +224,9 @@ def tryRegisterOwner(VIN):
 			
 						answer = input("[Y/N] (q to quit): ")
 						answer = answer.lower()
-						if (answer == "y"):
+						if (answer == "y" or answer == ""):
 							createPerson(SIN, name.lower(), height, weight, eyeColour.lower(), hairColour.lower(), addr.lower(), gender, birthday)
-							print ("Registering owner with SIN %s with vehicle with VIN %s" (SIN, VIN))
+							print ("Registering owner with SIN %s with vehicle with VIN %s" % (SIN, VIN))
 							registerOwner(VIN, SIN)
 							ans = False
 							break
@@ -195,13 +257,13 @@ def tryRegisterOwner(VIN):
 			birthday = DBgetBirthday(SIN)
 			
 			while(True):
-				print ("\nName: %s\nHeight: %d\nWeight: %d\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %d" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday))
+				print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday))
 				print ("Is this the person you're looking for?")
 				answer = input("[Y/N]: ")
 				answer = answer.lower()
 
-				if (answer == "y"):
-					print ("Registering owner with SIN %d with vehicle with VIN %d" (SIN, VIN))
+				if (answer == "y" or answer == ""):
+					print ("Registering owner with SIN %s with vehicle with VIN %s" % (SIN, VIN))
 					registerOwner(VIN, SIN)
 					break
 				elif (answer == "n"):
@@ -213,7 +275,7 @@ def tryRegisterOwner(VIN):
 			print ("Would you like to add another owner?")
 			answer = input("[Y/N]: ")
 			answer = answer.lower()
-			if (answer == "y"):
+			if (answer == "y" or answer == ""):
 				break
 			elif (answer == "n"):
 				adding = False
@@ -233,7 +295,7 @@ def startNVR():
 			print ("Sorry, that VIN already exists in the database. Would you like to try again?")
 			answer = input("[Y/N]: ")
 			answer = answer.lower()
-			if (answer == "y"):
+			if (answer == "y" or answer == ""):
 				continue
 			if (answer == "n"):
 				main()
@@ -254,13 +316,15 @@ def startNVR():
 					print ("That is not a valid vehicle type...")
 					continue
 		
+
+			print("about to create vehicle")
 			createVehicle(serialNum, make, model, year, color, vType)
 			
 			while(True):
 				print ("Would you like to add a vehicle owner?")
 				answer = input("[Y/N]: ")
 				answer = answer.lower()
-				if (answer == "y"):
+				if (answer == "y" or answer == ""):
 					tryRegisterOwner(VIN)
 					print ("\nThank you for registering this vehicle.")
 					print ("Going back to the main menu...\n")
@@ -287,7 +351,7 @@ def startAT():
 			print ("Sorry, that VIN doesn't exist. Would you like to create a new one?")
 			answer = input("[Y/N]: ")
 			answer = answer.lower()
-			if (answer == "y"):
+			if (answer == "y" or answer == ""):
 				print ("Let's fill in the vehicle's details...")
 				serialNum = VIN
 				make = input("Vehicle make: ")
@@ -316,12 +380,12 @@ def startAT():
 			
 			restartBool = False
 			while(True):
-				print ("\nMake: %s\nModel: %s\nYear: %d\nColor: %s\n" % (make, model, year, color))
+				print ("\nMake: %s\nModel: %s\nYear: %s\nColor: %s\n" % (make, model, year, color))
 				print ("Is this the vehicle you're looking for?")
 				inputAns = input("[Y/N]: ")
 				inputAns = inputAns.lower()
 
-				if (inputAns == "y"):
+				if (inputAns == "y" or answer == ""):
 					restartBool = False
 					break
 				elif (inputAns == "n"):
@@ -346,7 +410,7 @@ def startAT():
 					print ("Would you like to create a new instance in the system?")
 					answer = input("[Y/N]: ")
 					answer = answer.lower()
-					if (answer == "y"):
+					if (answer == "y" or answer == ""):
 						while (True):
 							name = input("Person's name: ")
 							i = True
@@ -372,7 +436,7 @@ def startAT():
 			
 							answer = input("[Y/N] (q to quit): ")
 							answer = answer.lower()
-							if (answer == "y"):
+							if (answer == "y" or answer == ""):
 								createPerson(sellerSIN, name.lower(), height, weight, eyeColour.lower(), hairColour.lower(), addr.lower(), gender, birthday)
 								ans = False
 								sellerBool = False
@@ -409,12 +473,12 @@ def startAT():
 				sellerBirthday = DBgetBirthday(sellerSIN)
 			
 				while(True):
-					print ("\nName: %s\nHeight: %d\nWeight: %d\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %d" % (sellerName, sellerHeight, sellerWeight, sellerEyeColour, sellerHairColour, sellerAddr, sellerGender, sellerBirthday))
+					print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (sellerName, sellerHeight, sellerWeight, sellerEyeColour, sellerHairColour, sellerAddr, sellerGender, sellerBirthday))
 					print ("Is this the person you're looking for?")
 					answer = input("[Y/N]: ")
 					answer = answer.lower()
 
-					if (answer == "y"):
+					if (answer == "y" or answer == ""):
 						sellerBool = False
 						break
 					elif (answer == "n"):
@@ -451,7 +515,7 @@ def startAT():
 					print ("Would you like to create a new instance in the system?")
 					answer = input("[Y/N]: ")
 					answer = answer.lower()
-					if (answer == "y"):
+					if (answer == "y" or answer == ""):
 						while (True):
 							name = input("Person's name: ")
 							i = True
@@ -477,7 +541,7 @@ def startAT():
 			
 							answer = input("[Y/N] (q to quit): ")
 							answer = answer.lower()
-							if (answer == "y"):
+							if (answer == "y" or answer == ""):
 								createPerson(buyerSIN, name.lower(), height, weight, eyeColour.lower(), hairColour.lower(), addr.lower(), gender, birthday)
 								ans = False
 								buyerBool = False
@@ -511,12 +575,12 @@ def startAT():
 				buyerBirthday = DBgetBirthday(buyerSIN)
 			
 				while(True):
-					print ("\nName: %s\nHeight: %d\nWeight: %d\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %d" % (buyerName, buyerHeight, buyerWeight, buyerEyeColour, buyerHairColour, buyerAddr, buyerGender, buyerBirthday))
+					print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (buyerName, buyerHeight, buyerWeight, buyerEyeColour, buyerHairColour, buyerAddr, buyerGender, buyerBirthday))
 					print ("Is this the person you're looking for?")
 					answer = input("[Y/N]: ")
 					answer = answer.lower()
 
-					if (answer == "y"):
+					if (answer == "y" or answer == ""):
 						buyerBool = False
 						break
 					elif (answer == "n"):
@@ -547,20 +611,43 @@ def startAT():
 
 def DBgetVehicleMake(VIN):
 	## Returns the make of vehicle at VIN
-	return "Car"
+	curs = connection.cursor()
+	statement = "SELECT v.maker from vehicle v where v.serial_no = '%s'" % (VIN)
+	curs.execute(statement)
+	rows = curs.fetchall()
+
+	curs.close()
+	return rows[0]
+
 def DBgetVehicleModel(VIN):
 	## Returns the model of vehicle at VIN	
-	return "A Good one"
+	curs = connection.cursor()
+	statement = "SELECT v.model from vehicle v where v.serial_no = '%s'" % (VIN)
+	curs.execute(statement)
+	rows = curs.fetchall()
+
+	curs.close()
+	return rows[0]
+
 def DBgetVehicleYear(VIN):
 	## Returns the year of the vehicle at VIN
-	return 1993
+	curs = connection.cursor()
+	statement = "SELECT v.year from vehicle v where v.serial_no = '%s'" % (VIN)
+	curs.execute(statement)
+	rows = curs.fetchall()
+
+	curs.close()
+	return rows[0]
+
 def DBgetVehicleColor(VIN):
 	## Returns the color of the vehicle at VIN
-	return "Blue"
+	curs = connection.cursor()
+	statement = "SELECT v.color from vehicle v where v.serial_no = '%s'" % (VIN)
+	curs.execute(statement)
+	rows = curs.fetchall()
 
-def createVehicle(serialNum, make, model, year, color, vType):
-	##Creates a new row in the vehicle table with the passed values
-	pass
+	curs.close()
+	return rows[0]
 
 def createAutoSale(transactionID, VIN, sellerSIN, buyerSIN, vehPrice):
 	## Creates a row in the auto_sale table with all the values above
@@ -574,18 +661,53 @@ def generateID():
 	
 def addOwner(VIN, buyerSIN):
 	## Adds an owner to the vehicle at VIN as a primary owner...
-	## Returns nothing
-	pass
+	curs = connection.cursor()
+	statement = "INSERT INTO owner VALUES ('%s', '%s', 'y')" % (buyerSIN, VIN)
+
+	try:
+		curs.execute(statement)
+	except cx_Oracle.DatabaseError as exc:
+		error, = exc.args
+		print(sys.stderr, "Error adding new owner to database")
+		print(sys.stderr, "Oracle code: ", error.code)
+		print(sys.stderr, "Oracle Message ", error.message)
+	
+	connection.commit()
+	curs.close()	
 
 def removeVehicleOwners(VIN):
 	## Removes all owners associated with the vehicle at the VIN, even if there are none available
 	## Returns nothing
-	pass
+	curs = connection.cursor()
+	statement = "delete from owner o where o.vehicle_id = '%s'" % VIN 
+
+	try:
+		curs.execute(statement)
+	except cx_Oracle.DatabaseError as exc:
+		error, = exc.args
+		print(sys.stderr, "Error removing owners from database")
+		print(sys.stderr, "Oracle code: ", error.code)
+		print(sys.stderr, "Oracle Message ", error.message)
+
+	connection.commit()
+	curs.close()
 
 def checkSellerOwnsVehicle(sellerSIN, VIN):
 	## Checks to see if sellerSIN is associated with the VIN
 	## Returns True or False
-	return True
+	curs = connection.cursor()
+	statement = "SELECT * from owner o where o.owner_id = '%s' and o.vehicle_id = '%s'" % (sellerSIN, VIN)
+	curs.execute(statement)
+	rows = curs.fetchall()
+
+	for row in rows:
+		if sellerSIN == row[0].strip() and VIN == row[1].strip() and row[2] == 'y':
+			curs.close()
+			return True
+	
+	curs.close()
+	return False 
+
 
 
 
