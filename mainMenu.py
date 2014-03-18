@@ -718,6 +718,7 @@ def startDLR():
 
 def startVR():
 	print ("Violation Record Selected")
+	
 
 def startSE():
 	print ("Search Engine Selected")
