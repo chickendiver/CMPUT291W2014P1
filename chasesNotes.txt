@@ -1,31 +1,22 @@
 notes:
 
-	write tryRegisterOwner function
-	+	Change sin to be char
-	+	write sinExists function
-	+	write create createPerson
-		+ hight isnt an int
-		+ weight isnt an int
-		+ fix date prompt for correct format
-		+ date isnt an int
-
-	-	write registerOwner
-		- Primary owner considerations?
-		+ Check for vehicle already exisitng in database
-
-	- Upon asking for owner SIN in registering vehicle incorrect person is returned
-		+ write DBgetPersonName(SIN) - DBgetBirthday(SIN)
-		- format birthday properly to return 
-
-	- for retrieving people or vehicles from DB, perhaps consolidate to 1 function rather than 1 for each field
-
-
-IN AT:
-	- Should seller have to be Primary owner to sell vehicle (probably)
-
-	
-
-
 
 ISSUES:
-	- checks and logic for owner being primary or not
+	- format display for birthday properly
+	- Make sure that no-entry on yes/no defaults to yes
+	- Add primary owner logic and necessary places
+
+
+
+
+Testing:
+	NVR:
+		Try with new and old vehicle
+		try with new and old owner 	 
+		break yes/no checker, and make sure all default to yes
+		Add primary owner logic
+
+	AT:
+		try with new and old vehicle
+		try with new and old SIN
+		Add Primary owner logic
