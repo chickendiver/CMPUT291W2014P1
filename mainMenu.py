@@ -1,6 +1,9 @@
 import sys
 import datetime
 import cx_Oracle
+import time
+import random
+import string
 
 def vinInDB(VIN):
 	## Returns true if the given VIN is on the database
@@ -63,6 +66,33 @@ def sinExists(SIN):
 		return True
 	curs.close()
 	return False
+
+def licenceExists(SIN):
+	# Check to see if someone with sin SIN already has a license
+	curs = connection.cursor()
+	statement = "select l.sin from drive_licence l where l.sin = '%s'" % (SIN)
+	curs.execute(statement)
+	rows = curs.fetchall()
+	curs.close()
+
+	if len(rows) > 0:
+		return True
+	return False
+
+def removeLicence(SIN):
+	# Remove licence owned by person with sin SIN
+	curs = connection.cursor()
+	statement = "delete from drive_licence l where l.sin = '%s'" % SIN
+	try:
+		curs.execute(statement)
+	except cx_Oracle.DatabaseError as exc:
+		error, = exc.args
+		print(sys.stderr, "Error removing license from Database")
+		print(sys.stderr, "Oracle code: ", error.code)
+		print(sys.stderr, "Oracle Message ", error.message)
+
+	connection.commit()
+	curs.close()
 
 
 def DBgetPersonName(SIN):
@@ -398,7 +428,8 @@ def startAT():
 				continue
 
 		sellerBool = True
-		while(sellerBool == True):
+		#while(sellerBool == True):
+		while(True):
 			## COPIED DIRECTLY FROM ABOVE CODE...
 			sellerSIN = input("Please enter the seller's SIN: ")
 		
@@ -597,14 +628,11 @@ def startAT():
 		## Ask for the vehicle price
 		vehPrice = input("What is the selling price of this vehicle? ")
 
+		dateOfSale = input("Please enter the date of sale in format [DD-MON-YY]: ")
 		removeVehicleOwners(VIN)
-		
 		addOwner(VIN, buyerSIN)
-
 		transactionID = generateID()
-		
-		createAutoSale(transactionID, VIN, sellerSIN, buyerSIN, vehPrice)
-
+		createAutoSale(transactionID, VIN, sellerSIN, buyerSIN, vehPrice, dateOfSale)
 		print("Thank you for reporting this sale!")
 		print("Returning to the main menu...\n\n")
 		main()
@@ -649,15 +677,56 @@ def DBgetVehicleColor(VIN):
 	curs.close()
 	return rows[0]
 
-def createAutoSale(transactionID, VIN, sellerSIN, buyerSIN, vehPrice):
+def createAutoSale(transactionID, VIN, sellerSIN, buyerSIN, vehPrice, dateOfSale):
 	## Creates a row in the auto_sale table with all the values above
 	## The current date will be put in for the s_date variable
+	curs = connection.cursor()
+	statement = "INSERT INTO auto_sale VALUES(%s, '%s', '%s', '%s', '%s', %s" % (transactionID, sellerSIN, buyerSIN, VIN, dateOfSale, vehPrice)
+	try:
+		curs.execute(statement)
+	except cx_Oracle.DatabaseError as exc:
+		error, = exc.args
+		print(sys.stderr, "Error adding new auto sale to database")
+		print(sys.stderr, "Oracle code: ", error.code)
+		print(sys.stderr, "Oracle Message ", error.message)
+	
+	connection.commit()
+	curs.close()	
+
+
 	print ("Auto sale created...")
 
 def generateID():
 	##Creates a random number to be used for auto sale transaction 
-	## Returns an integer	
-	return 1234
+	idNum = ''.join(random.choice(string.digits) for i in range(6))
+	while transIDinDB(idNum):
+		licenceNum = ''.join(random.choice(string.digits) for i in range(6))	
+	return idNum
+
+def transIDinDB(idNum):
+	#Checks if a transaction id already exists
+	curs = connection.cursor()
+	statement = "select a.transaction_id from auto_sale a where a.transaction_id = '%s'" % idNum
+	curs.execute(statement)
+	rows = curs.fetchall()
+
+	curs.close()
+	if len(rows) > 0:
+		return True
+	return False
+
+def licenceNumInDB(NUM):
+	# Checks if licence number is already in DB
+	curs = connection.cursor()
+	statement = "select l.licence_no from drive_licence l where l.licence_no = '%s'" % NUM
+	curs.execute(statement)
+	rows = curs.fetchall()
+
+	curs.close()
+	if len(rows) > 0:
+		return True
+	return False
+
 	
 def addOwner(VIN, buyerSIN):
 	## Adds an owner to the vehicle at VIN as a primary owner...
@@ -693,24 +762,22 @@ def removeVehicleOwners(VIN):
 	curs.close()
 
 def checkSellerOwnsVehicle(sellerSIN, VIN):
-	## Checks to see if sellerSIN is associated with the VIN
-	## Returns True or False
+	## Checks to see if anyone other than sellerSIN is associated with the VIN
+	## Returns True if seller or nobody owns; False if someone else is the primary owner
 	curs = connection.cursor()
-	statement = "SELECT * from owner o where o.owner_id = '%s' and o.vehicle_id = '%s'" % (sellerSIN, VIN)
+	statement = "SELECT * from owner o where o.vehicle_id = '%s'" % (VIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 
+	sellable = True
 	for row in rows:
-		if sellerSIN == row[0].strip() and VIN == row[1].strip() and row[2] == 'y':
-			curs.close()
-			return True
+		if row[0].strip() != sellerSIN and row[2] == 'y':
+			sellable = False
 	
 	curs.close()
+	if sellable:
+		return True
 	return False 
-
-
-
-
 			
 
 def startDLR():
@@ -776,8 +843,64 @@ def startDLR():
 				break			
 
 	# SIN of person to be added is in SIN, and person definitely exists
-	print("Creating license for: %s", DBgetPersonName(SIN))
-	
+	# Check if person already has a license
+	if licenceExists(SIN):
+		print("That person already has a license,\nwould you like to remove their old license?")
+		ans = getYN()
+		if ans == 'y':
+			removeLicence(SIN)
+		else:
+			print("License will not be altered\nExiting...")
+			return 
+
+
+
+	# Create License
+	drivingClass = input("Please enter a driving class: ")
+
+	issueDate = input("Please enter an issue date [DD-MON-YY], or 'n' for today's date: ")
+	if issueDate == 'n':
+		issueDate = time.strftime("%d-%b-%y")
+
+	while(True):
+		try:
+			yearsValid = int(input("please enter number of years license will be valid: "))
+		except:
+			print("Make sure entry is an integer")
+			continue
+		break
+
+	expireDate = issueDate[:]
+	newYear = int(expireDate[len(expireDate)-2 :])
+	newYear += yearsValid
+
+	expireDate = expireDate[:len(expireDate)-2]
+	expireDate += str(newYear)
+
+	while(True):
+		photo = 'NULL'
+		pathToPhoto = input("Please Provide an absolute path to the photo: ")
+		try:
+			image = open(pathToPhoto, 'rb')
+			photo = image.read()
+		except:
+			print("Error opening image.")
+			continue
+		break
+
+	photo = 'NULL'
+
+
+	licenceNum = ''.join(random.choice(string.ascii_lowercase + string.digits) for i in range(15))
+	while licenceNumInDB(licenceNum):
+		licenceNum = ''.join(random.choice(string.ascii_lowercase + string.digits) for i in range(15))
+
+
+	createLicence(licenceNum, SIN, drivingClass, photo, issueDate, expireDate)
+	print("Created licence for: %s" % DBgetPersonName(SIN))
+
+
+
 
 
 
@@ -787,6 +910,47 @@ def startVR():
 def startSE():
 	print ("Search Engine Selected")
 
+	while (True):
+		userInput = input("""PLEASE CHOOSE A SEARCH OPTION:
+	1. Licence Number
+	2. Name 
+	: """)
+		if userInput == '1' or userInput == '2':
+			break
+		else:
+			print("Please enter a valid input")
+	
+	if userInput == '1':
+		# Search by licence Number
+		licence = input("Please enter a licence number to search by: ")
+		searchLicence(licence)
+
+	if userInput == '2':
+		# Search by Name
+		name = input("Please enter a name to search by: ")
+		searchName(name)
+
+def searchLicence(licence):
+	#returns search results from licence 
+	curs = connection.cursor()
+	statement = "select p.name, l.licence_no, p.addr, p.birthday, l.class, dc.description, l.expiring_date from people p, drive_licence l, driving_condition dc, restriction r where p.sin = l.sin and l.licence_no = r.licence_no and dc.c_id = r.r_id and l.licence_no = '%s'" % licence
+	curs.execute(statement)
+	rows = curs.fetchall()
+	curs.close()
+	for row in rows:
+		print (row)
+	return
+
+def searchName(name):
+	#returns search results from name
+	curs = connection.cursor()
+	statement = "select p.name, l.licence_no, p.addr, p.birthday, l.class, dc.description, l.expiring_date from people p, drive_licence l, driving_condition dc, restriction r where p.sin = l.sin and l.licence_no = r.licence_no and dc.c_id = r.r_id and p.name = '%s'" % name
+	curs.execute(statement)
+	rows = curs.fetchall()
+	curs.close()
+	for row in rows:
+		print (row)
+	return
 
 def main():
 	print ("""PLEASE SELECT FROM THE FOLLOWING OPTIONS:
@@ -910,7 +1074,21 @@ def getYN():
 		else:
 			continue
 
+def createLicence(licenceNum, SIN, drivingClass, photo, issueDate, expireDate):
+	# Creates a new licence with specifications
+	curs = connection.cursor()
+	curs.setinputsizes(photo=cx_Oracle.BLOB)
+	statement = "INSERT INTO drive_licence VALUES('%s', '%s', '%s', %s, '%s', '%s')" % (licenceNum, SIN, drivingClass, photo, issueDate, expireDate)
+	try:
+		curs.execute(statement)
+	except cx_Oracle.DatabaseError as exc:
+		error, = exc.args
+		print(sys.stderr, "Error Adding new licence: ", statement)
+		print(sys.stderr, "Oracle code: ", error.code)
+		print(sys.stderr, "Oracle message: ", error.message)
 
+	connection.commit()
+	curs.close()
 
 #!# a little clusterd right now, maybe consider a delegation function to clean up main
 if __name__ =="__main__":
