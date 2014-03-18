@@ -198,7 +198,7 @@ def tryRegisterOwner(VIN):
 				print ("Would you like to create a new instance in the system?")
 				answer = input("[Y/N]: ")
 				answer = answer.lower()
-				if (answer == "y"):
+				if (answer == "y" or answer == ""):
 					while (True):
 						name = input("Person's name: ")
 						i = True
@@ -224,7 +224,7 @@ def tryRegisterOwner(VIN):
 			
 						answer = input("[Y/N] (q to quit): ")
 						answer = answer.lower()
-						if (answer == "y"):
+						if (answer == "y" or answer == ""):
 							createPerson(SIN, name.lower(), height, weight, eyeColour.lower(), hairColour.lower(), addr.lower(), gender, birthday)
 							print ("Registering owner with SIN %s with vehicle with VIN %s" % (SIN, VIN))
 							registerOwner(VIN, SIN)
@@ -262,7 +262,7 @@ def tryRegisterOwner(VIN):
 				answer = input("[Y/N]: ")
 				answer = answer.lower()
 
-				if (answer == "y"):
+				if (answer == "y" or answer == ""):
 					print ("Registering owner with SIN %s with vehicle with VIN %s" % (SIN, VIN))
 					registerOwner(VIN, SIN)
 					break
@@ -275,7 +275,7 @@ def tryRegisterOwner(VIN):
 			print ("Would you like to add another owner?")
 			answer = input("[Y/N]: ")
 			answer = answer.lower()
-			if (answer == "y"):
+			if (answer == "y" or answer == ""):
 				break
 			elif (answer == "n"):
 				adding = False
@@ -295,7 +295,7 @@ def startNVR():
 			print ("Sorry, that VIN already exists in the database. Would you like to try again?")
 			answer = input("[Y/N]: ")
 			answer = answer.lower()
-			if (answer == "y"):
+			if (answer == "y" or answer == ""):
 				continue
 			if (answer == "n"):
 				main()
@@ -324,7 +324,7 @@ def startNVR():
 				print ("Would you like to add a vehicle owner?")
 				answer = input("[Y/N]: ")
 				answer = answer.lower()
-				if (answer == "y"):
+				if (answer == "y" or answer == ""):
 					tryRegisterOwner(VIN)
 					print ("\nThank you for registering this vehicle.")
 					print ("Going back to the main menu...\n")
@@ -351,7 +351,7 @@ def startAT():
 			print ("Sorry, that VIN doesn't exist. Would you like to create a new one?")
 			answer = input("[Y/N]: ")
 			answer = answer.lower()
-			if (answer == "y"):
+			if (answer == "y" or answer == ""):
 				print ("Let's fill in the vehicle's details...")
 				serialNum = VIN
 				make = input("Vehicle make: ")
@@ -385,7 +385,7 @@ def startAT():
 				inputAns = input("[Y/N]: ")
 				inputAns = inputAns.lower()
 
-				if (inputAns == "y"):
+				if (inputAns == "y" or answer == ""):
 					restartBool = False
 					break
 				elif (inputAns == "n"):
@@ -410,7 +410,7 @@ def startAT():
 					print ("Would you like to create a new instance in the system?")
 					answer = input("[Y/N]: ")
 					answer = answer.lower()
-					if (answer == "y"):
+					if (answer == "y" or answer == ""):
 						while (True):
 							name = input("Person's name: ")
 							i = True
@@ -436,7 +436,7 @@ def startAT():
 			
 							answer = input("[Y/N] (q to quit): ")
 							answer = answer.lower()
-							if (answer == "y"):
+							if (answer == "y" or answer == ""):
 								createPerson(sellerSIN, name.lower(), height, weight, eyeColour.lower(), hairColour.lower(), addr.lower(), gender, birthday)
 								ans = False
 								sellerBool = False
@@ -478,7 +478,7 @@ def startAT():
 					answer = input("[Y/N]: ")
 					answer = answer.lower()
 
-					if (answer == "y"):
+					if (answer == "y" or answer == ""):
 						sellerBool = False
 						break
 					elif (answer == "n"):
@@ -515,7 +515,7 @@ def startAT():
 					print ("Would you like to create a new instance in the system?")
 					answer = input("[Y/N]: ")
 					answer = answer.lower()
-					if (answer == "y"):
+					if (answer == "y" or answer == ""):
 						while (True):
 							name = input("Person's name: ")
 							i = True
@@ -541,7 +541,7 @@ def startAT():
 			
 							answer = input("[Y/N] (q to quit): ")
 							answer = answer.lower()
-							if (answer == "y"):
+							if (answer == "y" or answer == ""):
 								createPerson(buyerSIN, name.lower(), height, weight, eyeColour.lower(), hairColour.lower(), addr.lower(), gender, birthday)
 								ans = False
 								buyerBool = False
@@ -580,7 +580,7 @@ def startAT():
 					answer = input("[Y/N]: ")
 					answer = answer.lower()
 
-					if (answer == "y"):
+					if (answer == "y" or answer == ""):
 						buyerBool = False
 						break
 					elif (answer == "n"):
