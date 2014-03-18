@@ -5,7 +5,7 @@ ISSUES:
 	- format display for birthday properly
 	- Make sure that no-entry on yes/no defaults to yes
 	- Add primary owner logic and necessary places
-
+	- Create some kind of queueing system for transactions that quit halfway through
 
 
 
