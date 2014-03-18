@@ -4,7 +4,7 @@ notes:
 ISSUES:
 	- format display for birthday properly
 	- Make sure that no-entry on yes/no defaults to yes
-	- Add primary owner logic and necessary places
+	- Add primary owner logic in necessary places
 	- Create some kind of queueing system for transactions that quit halfway through
 	- Drivers licence photo not working yet
 	+ In auto transaction review logic that seller owns vehicle
@@ -16,9 +16,6 @@ ISSUES:
 	- Restriction table is not being touched for driving conditions
 
 	- for search use joins for when people have no restrictions and stuff
-
-
-
 
 
 

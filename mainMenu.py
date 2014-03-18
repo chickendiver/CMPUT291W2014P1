@@ -914,7 +914,7 @@ def startSE():
 		userInput = input("""PLEASE CHOOSE A SEARCH OPTION:
 	1. Licence Number
 	2. Name 
-	: """)
+Select [1/2]: """)
 		if userInput == '1' or userInput == '2':
 			break
 		else:
@@ -923,34 +923,59 @@ def startSE():
 	if userInput == '1':
 		# Search by licence Number
 		licence = input("Please enter a licence number to search by: ")
-		searchLicence(licence)
+		results = searchLicence(licence)
+		print("== Results =========")
+
+		for row in results:
+			name = row[0].strip()
+			licence_no = row[1].strip()
+			addr = row[2].strip()
+			birthday = row[3]
+			dClass = row[4].strip()
+			dCondition = row[5].strip()
+			expDate = row[6]
+
+			print("Name: %s\nLicence Number: %s\nAddress: %s\nBirthday: %s\nDriving Class: %s\nDriving Condition: %s\nExpiration Date: %s\n") % (name, licence_no, addr, birthday, dClass, dCondition, expDate)
 
 	if userInput == '2':
 		# Search by Name
 		name = input("Please enter a name to search by: ")
-		searchName(name)
+		results = searchName(name)
+		print("== Results =========")
+
+		for row in results:
+			name = row[0].strip()
+			licence_no = row[1].strip()
+			addr = row[2].strip()
+			birthday = row[3]
+			dClass = row[4].strip()
+			dCondition = row[5].strip()
+			expDate = row[6]
+
+			print("Name: %s\nLicence Number: %s\nAddress: %s\nBirthday: %s\nDriving Class: %s\nDriving Condition: %s\nExpiration Date: %s\n") % (name, licence_no, addr, birthday, dClass, dCondition, expDate)
+
 
 def searchLicence(licence):
 	#returns search results from licence 
+	# Need to Add Joins for people without restrictions and such
 	curs = connection.cursor()
 	statement = "select p.name, l.licence_no, p.addr, p.birthday, l.class, dc.description, l.expiring_date from people p, drive_licence l, driving_condition dc, restriction r where p.sin = l.sin and l.licence_no = r.licence_no and dc.c_id = r.r_id and l.licence_no = '%s'" % licence
 	curs.execute(statement)
 	rows = curs.fetchall()
 	curs.close()
-	for row in rows:
-		print (row)
-	return
+	
+	return rows
 
 def searchName(name):
 	#returns search results from name
+	# Need to Add Joins for people without restrictions and such
 	curs = connection.cursor()
 	statement = "select p.name, l.licence_no, p.addr, p.birthday, l.class, dc.description, l.expiring_date from people p, drive_licence l, driving_condition dc, restriction r where p.sin = l.sin and l.licence_no = r.licence_no and dc.c_id = r.r_id and p.name = '%s'" % name
 	curs.execute(statement)
 	rows = curs.fetchall()
 	curs.close()
-	for row in rows:
-		print (row)
-	return
+	
+	return rows
 
 def main():
 	print ("""PLEASE SELECT FROM THE FOLLOWING OPTIONS:
