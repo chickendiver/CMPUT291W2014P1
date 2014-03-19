@@ -21,3 +21,14 @@ ISSUES:
 
 Final stuff:
 	Test up to possible test scenarios on eclass
+
+
+
+
+
+Mar 19:
+
+New Vehicle Registration:
+	-	Make sure all serial numbers entered and queried are switched to upper case
+	-	Mare sure people's birthdays print properly
+	- 	Fix vehicle type checking and printing

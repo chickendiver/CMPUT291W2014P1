@@ -24,12 +24,29 @@ def vinInDB(VIN):
 def printVTypes():
 	## Take a list of vehicle types from the DB and print them
 	## Print misc list for now...
-	print ("""		 1. Sedan
-		 2. SUV
-		 3. Coupe
-		 4. Van
-		 5. Truck
-		 6. RV""")
+	listOfVtypes = list()
+
+	curs = connection.cursor()
+	statement = "select v.type from vehicle_type v"
+	try:
+		curs.execute(statement)
+	except cx_Oracle.DatabaseError as exc:
+		error, = exc.args
+		print(sys.stderr, "Error Creating Vehicle statement: ", statement)
+		print(sys.stderr, "Oracle code: ", error.code)
+		print(sys.stderr, "Oracle message: ", error.message)
+
+	rows = curs.fetchall()
+	curs.close()
+
+	for row in rows:
+		listOfVtypes.append(row[0].strip())
+
+	for i in range(len(listOfVtypes)):
+		print("%d. %s" % (i,listOfVtypes[i]))
+
+	return listOfVtypes
+	
 
 def isVType(vType):
 	## Check to see if vType is in the list of vehicle types on the DB
@@ -193,7 +210,19 @@ def registerOwner(VIN, SIN):
 	connection.commit()
 	curs.close()
 
+def registerSecondary(VIN, SIN):
+	curs = connection.cursor()
+	statement = ("INSERT INTO owner VALUES('%s', '%s', 'n')" % (SIN, VIN))
+	try:
+		curs.execute(statement)
+	except cx_Oracle.DatabaseError as exc:
+		error, = exc.args
+		print(sys.stderr, "Error Regostering seconday owner: ", statement)
+		print(sys.stderr, "Oracle code: ", error.code)
+		print(sys.stderr, "Oracle message: ", error.message)
 
+	connection.commit()
+	curs.close()
 
 
 	return True
@@ -215,11 +244,146 @@ def createPerson(SIN, name, height, weight, eyeColour, hairColour, addr, gender,
 	
 	
 
-def tryRegisterOwner(VIN):
+
+def tryRegisterPrimary(VIN):
+
+	# Get SIN 
+	while(True):
+		SIN = input("Please enter Primary Owner SIN: ")
+		print ("is %s correct? " % SIN)
+		ans = getYN()
+		if ans == 'n':
+			continue
+		# Check if SIN is in DB
+		#if SIN doesnt exist, prompt to create new person
+		if sinExists(SIN) == False:
+			print("A person with that SIN doesn't exist, would you like to create one?")
+			ans = getYN()
+			if ans == 'n':
+				continue
+			#create new person
+			while (True):
+				name = input("Person's name: ")
+				height = input("Person's height: ")
+				weight = input("Person's weight: ")
+				eyeColour = input("Person's eye colour: ")
+				hairColour = input("Person's hair colour: ")
+				addr = input("Person's address: ")
+				while (True):
+					gender = input("Person's gender [m/f]: ")
+					gender = gender.lower()
+					if (gender == "m" or gender == "f"):
+						break
+					else:
+						print ("Sorry, that's not a valid option!")
+						print ("Please select from either 'm' or 'f'")
+				birthday = input("Person's birthday [DD-MON-YY]: ")
+						
+				print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (str(name), str(height), str(weight), str(eyeColour), str(hairColour), str(addr), str(gender), str(birthday)))
+				print ("Is this information correct?")
+				ans = getYN()
+				if ans == 'n':
+					continue
+				createPerson(SIN, name.lower(), height, weight, eyeColour.lower(), hairColour.lower(), addr.lower(), gender, birthday)
+				break
+		else:
+			name = DBgetPersonName(SIN)
+			height = DBgetPersonHeight(SIN)
+			weight = DBgetPersonWeight(SIN)
+			eyeColour = DBgetPersonEyeColour(SIN)
+			hairColour = DBgetPersonHairColour(SIN)
+			addr = DBgetPersonAddress(SIN)
+			gender = DBgetGender(SIN)
+			birthday = DBgetBirthday(SIN)
+
+			print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday))
+			print ("Is this the person you're looking for?")
+			ans = getYN()
+			if ans == 'n':
+				continue
+
+		# Person definitely exists now
+		# So time to finish off registration
+		print ("Registering Vehicle VIN: %s with Primary Owner: %s" % (VIN, SIN))
+		registerOwner(VIN, SIN)
+		break
+
+def tryRegisterSecondary(VIN):
+	# Get SIN 
+	while(True):
+		SIN = input("Please enter Secondary Owner SIN: ")
+		print ("is %s correct? " % SIN)
+		ans = getYN()
+		if ans == 'n':
+			continue
+		# Check if SIN is in DB
+		#if SIN doesnt exist, prompt to create new person
+		if sinExists(SIN) == False:
+			print("A person with that SIN doesn't exist, would you like to create one?")
+			ans = getYN()
+			if ans == 'n':
+				continue
+			#create new person
+			while (True):
+				name = input("Person's name: ")
+				height = input("Person's height: ")
+				weight = input("Person's weight: ")
+				eyeColour = input("Person's eye colour: ")
+				hairColour = input("Person's hair colour: ")
+				addr = input("Person's address: ")
+				while (True):
+					gender = input("Person's gender [m/f]: ")
+					gender = gender.lower()
+					if (gender == "m" or gender == "f"):
+						break
+					else:
+						print ("Sorry, that's not a valid option!")
+						print ("Please select from either 'm' or 'f'")
+				birthday = input("Person's birthday [DD-MON-YY]: ")
+						
+				print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (str(name), str(height), str(weight), str(eyeColour), str(hairColour), str(addr), str(gender), str(birthday)))
+				print ("Is this information correct?")
+				ans = getYN()
+				if ans == 'n':
+					continue
+				createPerson(SIN, name.lower(), height, weight, eyeColour.lower(), hairColour.lower(), addr.lower(), gender, birthday)
+				break
+		else:
+			name = DBgetPersonName(SIN)
+			height = DBgetPersonHeight(SIN)
+			weight = DBgetPersonWeight(SIN)
+			eyeColour = DBgetPersonEyeColour(SIN)
+			hairColour = DBgetPersonHairColour(SIN)
+			addr = DBgetPersonAddress(SIN)
+			gender = DBgetGender(SIN)
+			birthday = DBgetBirthday(SIN)
+
+			print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday))
+			print ("Is this the person you're looking for?")
+			ans = getYN()
+			if ans == 'n':
+				continue
+
+		# Person definitely exists now
+		# So time to finish off registration
+		print ("Registering Vehicle VIN: %s with Secondary Owner: %s" % (VIN, SIN))
+		registerSecondary
+		break
+
+
+
+
+def tryRegisterOwner(VIN, isPrimary):
+	## isPrimary is a y/n value denoting whether the owner will be a primary owner
 	## Prep from registering owner with VIN
+
 	adding = True
 	while (adding):
-		SIN = input("Please enter the new owner's SIN: ")
+
+		if isPrimary == 'y':
+			SIN = input("Please enter the new primary owner's SIN: ")
+		else: 
+			SIN = input("Please enter the new secondary owner's SIN: ")
 		
 		## CREATE A PERSON IN THE DB
 		if (sinExists(SIN) == False):
@@ -290,29 +454,18 @@ def tryRegisterOwner(VIN):
 			while(True):
 				print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday))
 				print ("Is this the person you're looking for?")
-				answer = input("[Y/N]: ")
-				answer = answer.lower()
-
-				if (answer == "y" or answer == ""):
+				answer = getYN()
+				if (answer == "y"):
 					print ("Registering owner with SIN %s with vehicle with VIN %s" % (SIN, VIN))
-					registerOwner(VIN, SIN)
-					break
+					if isPrimary == 'y':
+						registerOwner(VIN, SIN)
+						break
+					else:
+						registerSecondary(VIN, SIN)
 				elif (answer == "n"):
 					break
 				else:
 					print ("Sorry, that's not a valid option!")
-		
-		while(True):
-			print ("Would you like to add another owner?")
-			answer = input("[Y/N]: ")
-			answer = answer.lower()
-			if (answer == "y" or answer == ""):
-				break
-			elif (answer == "n"):
-				adding = False
-				break
-			else:
-				print ("Sorry, that's not a valid option!")
 
 ## On Main Menu Selection 1
 def startNVR():
@@ -321,52 +474,52 @@ def startNVR():
 	while (True):
 		#removed int typecast, as VIN can have letters in it
 		VIN = input("Please enter the new vehicle's serial number: ")
-			
+		
+		# Check if VIN in DB. If VIN in DB and dont want to try again, quit to main
 		if (vinInDB(VIN)):
 			print ("Sorry, that VIN already exists in the database. Would you like to try again?")
-			answer = input("[Y/N]: ")
-			answer = answer.lower()
-			if (answer == "y" or answer == ""):
+			ans = getYN()
+			if ans == 'y':
 				continue
-			if (answer == "n"):
-				main()
-		else:
-			print ("Let's fill in the vehicle's details...")
-			serialNum = VIN
-			make = input("Vehicle make: ")
-			model = input("Vehicle model: ")
-			year = input("Vehicle year: ") ## Check this to make sure it's a valid year
-			color = input("Vehicle colour: ")
-			print ("Select a vehicle type from the list: ")
-			printVTypes()
-			while (True):
-				vType = input("Select a vehicle type from the list: ")
-				if (isVType(vType)):
-					break
-				else:
-					print ("That is not a valid vehicle type...")
-					continue
-		
+			else:
+				break
 
-			print("about to create vehicle")
-			createVehicle(serialNum, make, model, year, color, vType)
-			
-			while(True):
-				print ("Would you like to add a vehicle owner?")
-				answer = input("[Y/N]: ")
-				answer = answer.lower()
-				if (answer == "y" or answer == ""):
-					tryRegisterOwner(VIN)
-					print ("\nThank you for registering this vehicle.")
-					print ("Going back to the main menu...\n")
-					main()
-				if (answer == "n"):
-					print ("\nThank you for registering this vehicle.")
-					print ("Going back to the main menu...\n")
-					main()
-				else:
-					print ("Sorry, that's not a valid option!")
-					continue
+
+		print ("Let's fill in the vehicle's details...")
+		serialNum = VIN
+		make = input("Vehicle make: ")
+		model = input("Vehicle model: ")
+		year = input("Vehicle year: ") ## Check this to make sure it's a valid year
+		color = input("Vehicle colour: ")
+		listOfTypes = printVTypes()
+		while (True):
+			vType = input("Select a vehicle type from the list: ")
+
+			if int(vType) > len(listOfTypes):
+				print("That is not a valid option")
+				continue
+			vType = listOfTypes[vType - 1]
+
+		# Output entered info for final check
+		print("Serial: %s\nMake: %s\nModel: %s\nYear: %s\nColor: %s\nType: %s") % (str(serialNum, str(make), str(model), str(year), str(color)), str(vType))
+		print("Is this information correct?")
+		ans = getYN()
+		if ans == 'n':
+			continue
+		createVehicle(serialNum, make, model, year, color, vType)
+		# Register the primary owner	
+		tryRegisterPrimary(VIN)		
+		print ("\nThank you for registering this vehicle.")
+
+		while(True):
+			print("Would you like to add a secondary owner? ")
+			ans = getYN()
+			if ans == 'n':
+				print("Exiting to main menu...")
+				break
+			if ans == 'y':
+				tryRegisterSecondary(VIN)
+		break		
 		
 		
 			
