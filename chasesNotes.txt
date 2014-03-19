@@ -4,19 +4,20 @@ notes:
 ISSUES:
 	- format display for birthday properly
 	- Make sure that no-entry on yes/no defaults to yes
-	- Add primary owner logic and necessary places
+	- Add primary owner logic in necessary places
 	- Create some kind of queueing system for transactions that quit halfway through
+	- Drivers licence photo not working yet
+	+ In auto transaction review logic that seller owns vehicle
+		+ if new vehicle is created, register it to the seller immediately.
+		+ if the seller does not own a vehicle that already exists, then they cannot sell it
+
+	- Make sure SINs and VINs are case insensitive
+	- Make some master exit key to stop getting stuck in infinite loops
+	- Restriction table is not being touched for driving conditions
+
+	- for search use joins for when people have no restrictions and stuff
 
 
 
-Testing:
-	NVR:
-		Try with new and old vehicle
-		try with new and old owner 	 
-		break yes/no checker, and make sure all default to yes
-		Add primary owner logic
-
-	AT:
-		try with new and old vehicle
-		try with new and old SIN
-		Add Primary owner logic
+Final stuff:
+	Test up to possible test scenarios on eclass
