@@ -715,9 +715,115 @@ def checkSellerOwnsVehicle(sellerSIN, VIN):
 
 def startDLR():
 	print ("Driver License Registration Selected")
+	
+	# acquire the SIN of the person being registered. 
+	# If that sin is not yet in the DB then create new person to go along with it
+	while(True):
+		#prompt user for SIN, check if SIN is already in DB
+		SIN = input("Please enter the SIN of the person you wish to register: ")
+		if (sinExists(SIN) == True):
+			print("Is this the person you were looking for?: ")
+			#print info of person SIN
+			Name = DBgetPersonName(SIN)
+			Height = DBgetPersonHeight(SIN)
+			Weight = DBgetPersonWeight(SIN)
+			EyeColour = DBgetPersonEyeColour(SIN)
+			HairColour = DBgetPersonHairColour(SIN)
+			Addr = DBgetPersonAddress(SIN)
+			Gender = DBgetGender(SIN)
+			Birthday = DBgetBirthday(SIN)
+
+			print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (Name, Height, Weight, EyeColour, HairColour, Addr, Gender, Birthday))
+			ans = getYN()
+			if (ans == 'n'):
+				continue
+			else:
+				break
+		else:
+			print("That Person does not exist, would you like to add them?: ")
+			ans = getYN()
+			if ans == 'n':
+				continue
+			else:
+				#add person to DB
+				while (True):
+					name = input("Person's name: ")
+					height = input("Person's height: ")
+					weight = input("Person's weight: ")
+					eyeColour = input("Person's eye colour: ")
+					hairColour = input("Person's hair colour: ")
+					addr = input("Person's address: ")
+					while (True):
+						gender = input("Person's gender [m/f]: ")
+						gender = gender.lower()
+						if (gender == "m" or gender == "f"):
+							break
+						else:
+							print ("Sorry, that's not a valid option!")
+							print ("Please select from either 'm' or 'f'")
+				
+					birthday = input("Person's birthday [DD-MON-YY]: ")
+					print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday))
+					print ("Is this information correct?")
+					ans = getYN()
+
+					if (ans == 'y'):
+						print ("Adding person to DB")
+						createPerson(SIN, name.lower(), height, weight, eyeColour.lower(), hairColour.lower(), addr.lower(), gender, birthday)
+						break
+					else:
+						continue
+				break			
+
+	# SIN of person to be added is in SIN, and person definitely exists
+	print("Creating license for: %s", DBgetPersonName(SIN))
+	
+
+
 
 def startVR():
 	print ("Violation Record Selected")
+
+
+	while(True):
+		# Ask to enter badge number
+		officerID = input("Please enter the issuing officer's SIN: ")
+		if (sinExists(officerID) == True):
+			# Ask for violator's SIN
+			while(True):
+				violatorSIN = input("Please enter the violator's SIN: ")
+				if (sinExists(violatorSIN) == True):
+			
+					# Ask for the type of offense
+					# Do this by displaying a list of possible violations and asking the user to choose
+					# Ask for the date of the ticket
+					# Ask for additional descriptions
+					# Allow the user to review before submitting
+
+				else:
+					print("Sorry, there is nobody listed under that SIN. \n")
+					print("Would you like to try again?")
+					ans = getYN()
+					if (ans == 'y'):
+						continue
+					else:
+						print("Would you like to enter a new officer?")
+						ans = getYN()
+						if (ans == 'y'):
+							startVR()
+						else:
+							main()
+
+		else:
+			print("Sorry, there is nobody listed under that SIN. \n")
+			print("Would you like to try again?")
+			ans = getYN()
+			if (ans == 'y'):
+				continue
+			else:
+				main()
+
+	
 
 def startSE():
 	print ("Search Engine Selected")
@@ -833,6 +939,19 @@ def populateTables(inputFile):
 	inputFile.close()
 	cursInsert.close()
 	connection.commit()
+
+def getYN():
+	while (True):
+		answer = input("[Y/N]: ")
+		answer = answer.lower()
+		if answer == 'y' or answer == '':
+			return 'y'
+		elif answer == 'n':
+			return 'n'
+		else:
+			continue
+
+
 
 #!# a little clusterd right now, maybe consider a delegation function to clean up main
 if __name__ =="__main__":

@@ -783,6 +783,49 @@ def startDLR():
 
 def startVR():
 	print ("Violation Record Selected")
+
+
+	while(True):
+		# Ask to enter badge number
+		officerID = input("Please enter the issuing officer's SIN: ")
+		if (sinExists(officerID) == True):
+			# Ask for violator's SIN
+			while(True):
+				violatorSIN = input("Please enter the violator's SIN: ")
+				if (sinExists(violatorSIN) == True):
+			
+					# Ask for the type of offense
+
+					
+					# Do this by displaying a list of possible violations and asking the user to choose
+					# Ask for the date of the ticket
+					# Ask for additional descriptions
+					# Allow the user to review before submitting
+
+				else:
+					print("Sorry, there is nobody listed under that SIN. \n")
+					print("Would you like to try again?")
+					ans = getYN()
+					if (ans == 'y'):
+						continue
+					else:
+						print("Would you like to enter a new officer?")
+						ans = getYN()
+						if (ans == 'y'):
+							startVR()
+						else:
+							main()
+
+
+		else:
+			print("Sorry, there is nobody listed under that SIN. \n")
+			print("Would you like to try again?")
+			ans = getYN()
+			if (ans == 'y'):
+				continue
+			else:
+				main()
+
 	
 
 def startSE():
