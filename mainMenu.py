@@ -4,6 +4,7 @@ import cx_Oracle
 import time
 import random
 import string
+from random import randint
 
 def vinInDB(VIN):
 	## Returns true if the given VIN is on the database
@@ -900,30 +901,108 @@ def startDLR():
 	print("Created licence for: %s" % DBgetPersonName(SIN))
 
 
+def displayPossibleViolations():
+	## Prints unique violations as they exist in the table "ticket_type"
+	## For the user's reference
+
+	return True
 
 
+def checkViolationExists(violationType):
+	## Checks to see if the violationType argument exists in the "ticket_type"
+	## Returns True for now...
+	return True
 
+def stringToDate(dateString):
+	## Turns a string to a date
+	return True
+
+def createViolation(ticketNumber, violatorSIN, vehicleID, violationType, issueDate, place, descriptions):
+	## Creates a violation row in the ticket table
+	return True
+
+def generateTicketNumber():
+	## Generates a random number
+	return randint(4000,90000)
 
 def startVR():
 	print ("Violation Record Selected")
 
 
 	while(True):
+
 		# Ask to enter badge number
 		officerID = input("Please enter the issuing officer's SIN: ")
-		if (sinExists(officerID) == True):
+		if (sinExists(officerID) == False): ## CHANGE TO TRUE
+
 			# Ask for violator's SIN
 			while(True):
 				violatorSIN = input("Please enter the violator's SIN: ")
-				if (sinExists(violatorSIN) == True):
-			
-					# Ask for the type of offense
-
+				if (sinExists(violatorSIN) == False): ## CHANGE TO TRUE
 					
-					# Do this by displaying a list of possible violations and asking the user to choose
-					# Ask for the date of the ticket
-					# Ask for additional descriptions
-					# Allow the user to review before submitting
+					# Ask for the vehicle VIN
+					while(True):
+						vehicleVIN = input("Please enter the vehicle VIN: ")
+						if(vinInDB(vehicleVIN) == False):
+							
+							# Ask for the type of offense
+							print("Please select a violation from the list below: \n")
+							displayPossibleViolations()
+
+							while (True):
+								violationType = input("\nTicket violation: ")
+								violationCheck = checkViolationExists(violationType)
+					
+								if (violationCheck):
+
+									# Ask for the date of the ticket
+									issueDate = input("Please enter the date for which the ticket will be issued [DD-MON-YY] or type 'today' for today's date: ")
+
+									if (issueDate == "today"):
+										issueDate = time.strftime("%d-%b-%y")
+									else:
+										issueDate = stringToDate(issueDate)
+									# Ask for a place
+									place = input("Please enter the place of the violation: ")
+
+									# Ask for additional descriptions
+									while (True):
+										descriptions = input("Please input any extra descriptions: ")	
+										if(len(descriptions) < 1024):
+									
+											# Allow the user to review before submitting
+											print("Please review this information:\n")
+				
+											#officerName = DBgetPersonName(officerID)
+											#violatorName = DBgetPersonName(violatorSIN)
+											officerName = "Bob"
+											violatorName = "Jimbo"
+
+											print("Issuing officer name: %s\nViolator name: %s\nVIN: %s\nViolation type: %s\nViolation date: %s\nPlace: %s\nDescriptions: %s\n" % (officerName, violatorName, vehicleVIN, violationType, issueDate, place, descriptions))
+											print ("Is this information correct?: ")
+											ans = getYN()
+											if (ans == 'y'):
+												ticketNumber = generateTicketNumber()
+												createViolation(ticketNumber, violatorSIN, vehicleVIN, violationType, issueDate, place, descriptions)
+												print("Thank you for submitting this ticket.\nReturning to the main menu.")
+												main()
+										
+											else:
+												print("Please try the process again.")
+												startVR()
+
+											# Generate random ticket_no
+										else:
+											print("Sorry, that description is too long. Please try again \n")
+											break
+								else:
+									print ("Sorry, that ticket violation does not exist. Please try again.")
+									break
+
+								## END
+						else:
+							print("That VIN does not exist in the database. Please enter a valid one.")
+							continue
 
 				else:
 					print("Sorry, there is nobody listed under that SIN. \n")
