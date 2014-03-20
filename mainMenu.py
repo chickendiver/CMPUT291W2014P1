@@ -1073,7 +1073,8 @@ def stringToDate(dateString):
 def createViolation(ticketNumber, violatorSIN, vehicleID, violationType, issueDate, place, descriptions):
 	## Creates a violation row in the ticket table
 	return True
-
+ver by entering either a licence_no or a given name. It shall display all the entries if a duplicate name is given.
+List all violation records received by a person if  the drive licence_no or sin of a person  is entered.
 def generateTicketNumber():
 	## Generates a random number
 	return randint(4000,90000)
