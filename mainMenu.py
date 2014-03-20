@@ -9,6 +9,8 @@ from random import randint
 def vinInDB(VIN):
 	## Returns true if the given VIN is on the database
 	## Returns false for now...
+	VIN = VIN.upper()
+
 	curs = connection.cursor()
 	statement = "select v.serial_no from vehicle v where v.serial_no = '" + str(VIN) + "'"
 	curs.execute(statement)
@@ -43,7 +45,7 @@ def printVTypes():
 		listOfVtypes.append(row[0].strip())
 
 	for i in range(len(listOfVtypes)):
-		print("%d. %s" % (i,listOfVtypes[i]))
+		print("%d. %s" % (i+1,listOfVtypes[i]))
 
 	return listOfVtypes
 	
@@ -55,6 +57,11 @@ def isVType(vType):
 
 def createVehicle(serialNum, make, model, year, color, vType):
 	#statement = "INSERT INTO vehicle VALUES ('" + str(serialNum) + "', '" + str(make) + "', '" + str(model) + "', " + str(year) + ", '" + str(color) + "', " + str(vType) + ")" 
+	serialNum = serialNum.upper()
+	make = make.upper()
+	model = model.upper()
+	color = color.upper()
+
 	statement = "INSERT INTO vehicle VALUES ('%s', '%s', '%s', %s, '%s', %s)" % (serialNum, make, model, year, color, vType)	
 	curs = connection.cursor()
 
@@ -74,6 +81,8 @@ def createVehicle(serialNum, make, model, year, color, vType):
 def sinExists(SIN):
 	## Checks to see if a SIN exists on the DB
 	## Returns True for now..
+	SIN = SIN.upper()
+
 	curs = connection.cursor()
 	statement = "select p.sin from people p where p.sin = '" + str(SIN) + "'"
 	curs.execute(statement)
@@ -87,6 +96,8 @@ def sinExists(SIN):
 
 def licenceExists(SIN):
 	# Check to see if someone with sin SIN already has a license
+	SIN = SIN.upper()
+
 	curs = connection.cursor()
 	statement = "select l.sin from drive_licence l where l.sin = '%s'" % (SIN)
 	curs.execute(statement)
@@ -99,6 +110,8 @@ def licenceExists(SIN):
 
 def removeLicence(SIN):
 	# Remove licence owned by person with sin SIN
+	SIN = SIN.upper()
+
 	curs = connection.cursor()
 	statement = "delete from drive_licence l where l.sin = '%s'" % SIN
 	try:
@@ -115,87 +128,105 @@ def removeLicence(SIN):
 
 def DBgetPersonName(SIN):
 	## Returns person at SIN's name
+	SIN = SIN.upper()
+
 	curs = connection.cursor()
 	statement = "select p.name from people p where p.sin = '%s'" % (SIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 
 	curs.close()
-	return rows[0]
+	return rows[0][0]
 
 def DBgetPersonHeight(SIN):
 	## Returns person at SIN's height
+	SIN = SIN.upper()
+
 	curs = connection.cursor()
 	statement = "select p.height from people p where p.sin = '%s'" % (SIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 
 	curs.close()
-	return rows[0]
+	return rows[0][0]
 
 def DBgetPersonWeight(SIN):
 	## Returns person at SIN's weight
+	SIN = SIN.upper()
+
 	curs = connection.cursor()
 	statement = "select p.weight from people p where p.sin = '%s'" % (SIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 
 	curs.close()
-	return rows[0]
+	return rows[0][0]
 
 def DBgetPersonEyeColour(SIN):
 	## Returns person at SIN's eye colour
+	SIN = SIN.upper()
+
 	curs = connection.cursor()
 	statement = "select p.eyecolor from people p where p.sin = '%s'" % (SIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 
 	curs.close()
-	return rows[0]
+	return rows[0][0]
 
 def DBgetPersonHairColour(SIN):
 	## Returns person at SIN's hair colour
+	SIN = SIN.upper()
+
 	curs = connection.cursor()
 	statement = "select p.haircolor from people p where p.sin = '%s'" % (SIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 
 	curs.close()
-	return rows[0]
+	return rows[0][0]
 
 def DBgetPersonAddress(SIN):
 	## Returns person at SIN's address
+	SIN = SIN.upper()
+
 	curs = connection.cursor()
 	statement = "select p.addr from people p where p.sin = '%s'" % (SIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 
 	curs.close()
-	return rows[0]
+	return rows[0][0]
 
 def DBgetGender(SIN):
 	## Returns person at SIN's gender
+	SIN = SIN.upper()
+
 	curs = connection.cursor()
 	statement = "select p.gender from people p where p.sin = '%s'" % (SIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 
 	curs.close()
-	return rows[0]
+	return rows[0][0]
 
 def DBgetBirthday(SIN):
 	## Returns person at SIN's birthday
+	SIN = SIN.upper()
+
 	curs = connection.cursor()
 	statement = "select p.birthday from people p where p.sin = '%s'" % (SIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 
 	curs.close()
-	return rows[0]
+	return rows[0][0]
 
 def registerOwner(VIN, SIN):
 	## Registers the owner with the VIN on the database
 	# Add row to owners table with values (SIN, VIN, y/n)
+	SIN = SIN.upper()
+	VIN = VIN.upper()
 
 	curs = connection.cursor()
 	statement = ("INSERT INTO owner VALUES('%s', '%s', 'y')" % (SIN, VIN))
@@ -211,6 +242,9 @@ def registerOwner(VIN, SIN):
 	curs.close()
 
 def registerSecondary(VIN, SIN):
+	SIN = SIN.upper()
+	VIN = VIN.upper()
+
 	curs = connection.cursor()
 	statement = ("INSERT INTO owner VALUES('%s', '%s', 'n')" % (SIN, VIN))
 	try:
@@ -229,6 +263,12 @@ def registerSecondary(VIN, SIN):
 
 def createPerson(SIN, name, height, weight, eyeColour, hairColour, addr, gender, birthday):
 	## Creates a person on the database
+	SIN = SIN.upper()
+	name = name.upper()
+	eyeColour = eyeColour.upper()
+	hairColour = hairColour.upper()
+	addr = addr.upper()
+
 	curs = connection.cursor()
 	statement = ("INSERT INTO people VALUES('" + str(SIN) + "', '" + str(name) + "', " + str(height)+ ", " + str(weight)+ ", '" + str(eyeColour) + "', '" + str(hairColour) + "', '" + str(addr) + "', '" + str(gender) + "', '" + str(birthday) + "')")
 	try:
@@ -296,7 +336,7 @@ def tryRegisterPrimary(VIN):
 			gender = DBgetGender(SIN)
 			birthday = DBgetBirthday(SIN)
 
-			print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday))
+			print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (str(name), str(height), str(weight), str(eyeColour), str(hairColour), str(addr), str(gender), str(birthday.strftime('%d-%b-%y'))))
 			print ("Is this the person you're looking for?")
 			ans = getYN()
 			if ans == 'n':
@@ -358,7 +398,7 @@ def tryRegisterSecondary(VIN):
 			gender = DBgetGender(SIN)
 			birthday = DBgetBirthday(SIN)
 
-			print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday))
+			print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (str(name), str(height), str(weight), str(eyeColour), str(hairColour), str(addr), str(gender), str(birthday.strftime('%d-%b-%y'))))
 			print ("Is this the person you're looking for?")
 			ans = getYN()
 			if ans == 'n':
@@ -371,101 +411,6 @@ def tryRegisterSecondary(VIN):
 		break
 
 
-
-
-def tryRegisterOwner(VIN, isPrimary):
-	## isPrimary is a y/n value denoting whether the owner will be a primary owner
-	## Prep from registering owner with VIN
-
-	adding = True
-	while (adding):
-
-		if isPrimary == 'y':
-			SIN = input("Please enter the new primary owner's SIN: ")
-		else: 
-			SIN = input("Please enter the new secondary owner's SIN: ")
-		
-		## CREATE A PERSON IN THE DB
-		if (sinExists(SIN) == False):
-			print("Sorry, that SIN doesn't exist...")
-			ans = True
-			while (ans == True):
-				print ("Would you like to create a new instance in the system?")
-				answer = input("[Y/N]: ")
-				answer = answer.lower()
-				if (answer == "y" or answer == ""):
-					while (True):
-						name = input("Person's name: ")
-						i = True
-						height = input("Person's height: ")
-							
-						weight = input("Person's weight: ")
-
-						eyeColour = input("Person's eye colour: ")
-						hairColour = input("Person's hair colour: ")
-						addr = input("Person's address: ")
-						while (True):
-							gender = input("Person's gender [m/f]: ")
-							gender = gender.lower()
-							if (gender == "m" or gender == "f"):
-								break
-							else:
-								print ("Sorry, that's not a valid option!")
-								print ("Please select from either 'm' or 'f'")
-						birthday = input("Person's birthday [DD-MON-YY]: ")
-						
-						print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday))
-						print ("Is this information correct?")
-			
-						answer = input("[Y/N] (q to quit): ")
-						answer = answer.lower()
-						if (answer == "y" or answer == ""):
-							createPerson(SIN, name.lower(), height, weight, eyeColour.lower(), hairColour.lower(), addr.lower(), gender, birthday)
-							print ("Registering owner with SIN %s with vehicle with VIN %s" % (SIN, VIN))
-							registerOwner(VIN, SIN)
-							ans = False
-							break
-						elif (answer == "n"):
-							print ("Please re-enter the information:\n")
-							continue
-						elif (answer == "q"):
-							ans = False
-							break
-						else:
-							print ("Sorry, that's not a valid option!")
-
-				elif (answer == "n"):
-					break
-				else:
-					print ("Sorry, that's not a valid option!")
-			
-
-		## GET PERSON'S DATA FROM DB
-		else:
-			name = DBgetPersonName(SIN)
-			height = DBgetPersonHeight(SIN)
-			weight = DBgetPersonWeight(SIN)
-			eyeColour = DBgetPersonEyeColour(SIN)
-			hairColour = DBgetPersonHairColour(SIN)
-			addr = DBgetPersonAddress(SIN)
-			gender = DBgetGender(SIN)
-			birthday = DBgetBirthday(SIN)
-			
-			while(True):
-				print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday))
-				print ("Is this the person you're looking for?")
-				answer = getYN()
-				if (answer == "y"):
-					print ("Registering owner with SIN %s with vehicle with VIN %s" % (SIN, VIN))
-					if isPrimary == 'y':
-						registerOwner(VIN, SIN)
-						break
-					else:
-						registerSecondary(VIN, SIN)
-				elif (answer == "n"):
-					break
-				else:
-					print ("Sorry, that's not a valid option!")
 
 ## On Main Menu Selection 1
 def startNVR():
@@ -491,22 +436,33 @@ def startNVR():
 		model = input("Vehicle model: ")
 		year = input("Vehicle year: ") ## Check this to make sure it's a valid year
 		color = input("Vehicle colour: ")
-		listOfTypes = printVTypes()
+	
 		while (True):
+			listOfTypes = printVTypes()
 			vType = input("Select a vehicle type from the list: ")
+			
+			try:
+				vType = int(vType)
+			except:
+				print("Please enter an integer")
+				continue
 
-			if int(vType) > len(listOfTypes):
+
+			if (vType) > len(listOfTypes):
 				print("That is not a valid option")
 				continue
+			vNum = vType
 			vType = listOfTypes[vType - 1]
+			break
 
 		# Output entered info for final check
-		print("Serial: %s\nMake: %s\nModel: %s\nYear: %s\nColor: %s\nType: %s") % (str(serialNum, str(make), str(model), str(year), str(color)), str(vType))
+		print("")
+		print("Serial: %s\nMake: %s\nModel: %s\nYear: %s\nColour: %s\nType: %s\n" % (str(serialNum), str(make), str(model), str(year), str(color), str(vType)))
 		print("Is this information correct?")
 		ans = getYN()
 		if ans == 'n':
 			continue
-		createVehicle(serialNum, make, model, year, color, vType)
+		createVehicle(serialNum, make, model, year, color, vNum)
 		# Register the primary owner	
 		tryRegisterPrimary(VIN)		
 		print ("\nThank you for registering this vehicle.")
@@ -529,122 +485,26 @@ def startAT():
 	print ("Auto Transaction Selected")
 	while (True):
 
-		VIN = input("Please enter the new vehicle's serial number: ")
+		VIN = input("Please enter the vehicle's serial number: ")
 			
 		if (vinInDB(VIN) == False):
-			print ("Sorry, that VIN doesn't exist. Would you like to create a new one?")
-			answer = input("[Y/N]: ")
-			answer = answer.lower()
-			if (answer == "y" or answer == ""):
-				print ("Let's fill in the vehicle's details...")
-				serialNum = VIN
-				make = input("Vehicle make: ")
-				model = input("Vehicle model: ")
-				year = input("Vehicle year: ") ## Check this to make sure it's a valid year
-				color = input("Vehicle colour: ")
-				print ("Select a vehicle type from the list: ")
-				printVTypes()
-				while (True):
-					vType = input("Select a vehicle type from the list: ")
-					if (isVType(vType)):
-						break
-					else:
-						print ("That is not a valid vehicle type...")
-						continue
-		
-				createVehicle(serialNum, make, model, year, color, vType)
-			if (answer == "n"):
-				print ("Let's try this again, then...")
-				continue
-		else:
-			make = DBgetVehicleMake(VIN)
-			model = DBgetVehicleModel(VIN)
-			year = DBgetVehicleYear(VIN)
-			color = DBgetVehicleColor(VIN)
-			
-			restartBool = False
-			while(True):
-				print ("\nMake: %s\nModel: %s\nYear: %s\nColor: %s\n" % (make, model, year, color))
-				print ("Is this the vehicle you're looking for?")
-				inputAns = input("[Y/N]: ")
-				inputAns = inputAns.lower()
+			print ("Sorry, that VIN doesn't exist. Would you like to sell a different vehicle?")
+			ans = getYN()
+			if ans == 'n':
+				break
+			else:
+				continue				
 
-				if (inputAns == "y" or answer == ""):
-					restartBool = False
-					break
-				elif (inputAns == "n"):
-					restartBool = True
-					break
-				else:
-					print ("Sorry, that's not a valid option!")
-
-			if (restartBool == True):
-				continue
-
-		sellerBool = True
-		#while(sellerBool == True):
 		while(True):
-			## COPIED DIRECTLY FROM ABOVE CODE...
 			sellerSIN = input("Please enter the seller's SIN: ")
 		
-			## CREATE A PERSON IN THE DB
 			if (sinExists(sellerSIN) == False):
-				print("Sorry, that SIN doesn't exist...")
-				ans = True
-				while (ans == True):
-					print ("Would you like to create a new instance in the system?")
-					answer = input("[Y/N]: ")
-					answer = answer.lower()
-					if (answer == "y" or answer == ""):
-						while (True):
-							name = input("Person's name: ")
-							i = True
-							height = input("Person's height: ")
-							
-							weight = input("Person's weight: ")
-
-							eyeColour = input("Person's eye colour: ")
-							hairColour = input("Person's hair colour: ")
-							addr = input("Person's address: ")
-							while (True):
-								gender = input("Person's gender [m/f]: ")
-								gender = gender.lower()
-								if (gender == "m" or gender == "f"):
-									break
-								else:
-									print ("Sorry, that's not a valid option!")
-									print ("Please select from either 'm' or 'f'")
-							birthday = input("Person's birthday [DD-MON-YY]: ")
-						
-							print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday))
-							print ("Is this information correct?")
-			
-							answer = input("[Y/N] (q to quit): ")
-							answer = answer.lower()
-							if (answer == "y" or answer == ""):
-								createPerson(sellerSIN, name.lower(), height, weight, eyeColour.lower(), hairColour.lower(), addr.lower(), gender, birthday)
-								ans = False
-								sellerBool = False
-								break
-							elif (answer == "n"):
-								print ("Please re-enter the information:\n")
-								ans = True
-								sellerBool = True
-								continue
-							elif (answer == "q"):
-								main()
-							else:
-								print ("Sorry, that's not a valid option!")
-
-					elif (answer == "n"):
-						sellerBool = True
-						break
-					else:
-						print ("Sorry, that's not a valid option!")
-
-				if (sellerBool):
+				print("Sorry, that SIN doesn't exist... would you like to enter a different seller?")
+				ans = getYN()
+				if ans == 'n':
+					break
+				else:
 					continue
-			
 
 			## GET PERSON'S DATA FROM DB
 			else:
@@ -657,34 +517,22 @@ def startAT():
 				sellerGender = DBgetGender(sellerSIN)
 				sellerBirthday = DBgetBirthday(sellerSIN)
 			
-				while(True):
-					print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (sellerName, sellerHeight, sellerWeight, sellerEyeColour, sellerHairColour, sellerAddr, sellerGender, sellerBirthday))
-					print ("Is this the person you're looking for?")
-					answer = input("[Y/N]: ")
-					answer = answer.lower()
-
-					if (answer == "y" or answer == ""):
-						sellerBool = False
-						break
-					elif (answer == "n"):
-						sellerBool = True
-						break
-					else:
-						print ("Sorry, that's not a valid option!")
-
-
-				if (sellerBool):
+				print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (sellerName, sellerHeight, sellerWeight, sellerEyeColour, sellerHairColour, sellerAddr, sellerGender, str(sellerBirthday.strftime('%d-%b-%y'))))
+				print ("Is this the person you're looking for?")
+				ans = getYN()
+				if ans == 'n':
 					continue
 
-			## Check to see if the selected sellerSIN owns the VIN
 
-			if (checkSellerOwnsVehicle(sellerSIN, VIN) == False):
-				print("Sorry, that person doesn't own this vehicle.")
+			break
+		## Check to see if the selected sellerSIN owns the VIN
+		if (checkSellerOwnsVehicle(sellerSIN, VIN) == False):
+			print("Sorry, that person doesn't own this vehicle. \nwould you like to try a different vehicle?")
+			ans = getYN()
+			if ans == 'y':
 				continue
 			else:
 				break
-
-
 
 		## Get the buyer's information...
 		buyerBool = True
@@ -760,7 +608,7 @@ def startAT():
 				buyerBirthday = DBgetBirthday(buyerSIN)
 			
 				while(True):
-					print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (buyerName, buyerHeight, buyerWeight, buyerEyeColour, buyerHairColour, buyerAddr, buyerGender, buyerBirthday))
+					print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (buyerName, buyerHeight, buyerWeight, buyerEyeColour, buyerHairColour, buyerAddr, buyerGender, str(buyerBirthday.strftime('%d-%b-%y'))))
 					print ("Is this the person you're looking for?")
 					answer = input("[Y/N]: ")
 					answer = answer.lower()
@@ -789,53 +637,65 @@ def startAT():
 		createAutoSale(transactionID, VIN, sellerSIN, buyerSIN, vehPrice, dateOfSale)
 		print("Thank you for reporting this sale!")
 		print("Returning to the main menu...\n\n")
-		main()
+		break
+		
 
 def DBgetVehicleMake(VIN):
 	## Returns the make of vehicle at VIN
+	VIN = VIN.upper()
 	curs = connection.cursor()
 	statement = "SELECT v.maker from vehicle v where v.serial_no = '%s'" % (VIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 
 	curs.close()
-	return rows[0]
+	return rows[0][0]
 
 def DBgetVehicleModel(VIN):
-	## Returns the model of vehicle at VIN	
+	## Returns the model of vehicle at VIN
+	VIN = VIN.upper()	
 	curs = connection.cursor()
 	statement = "SELECT v.model from vehicle v where v.serial_no = '%s'" % (VIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 
 	curs.close()
-	return rows[0]
+	return rows[0][0]
 
 def DBgetVehicleYear(VIN):
 	## Returns the year of the vehicle at VIN
+	VIN = VIN.upper()
 	curs = connection.cursor()
 	statement = "SELECT v.year from vehicle v where v.serial_no = '%s'" % (VIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 
 	curs.close()
-	return rows[0]
+	return rows[0][0]
 
 def DBgetVehicleColor(VIN):
 	## Returns the color of the vehicle at VIN
+	VIN = VIN.upper()
 	curs = connection.cursor()
 	statement = "SELECT v.color from vehicle v where v.serial_no = '%s'" % (VIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 
 	curs.close()
-	return rows[0]
+	return rows[0][0]
 
 def createAutoSale(transactionID, VIN, sellerSIN, buyerSIN, vehPrice, dateOfSale):
 	## Creates a row in the auto_sale table with all the values above
 	## The current date will be put in for the s_date variable
+	transactionID = transactionID.upper()
+	VIN = VIN.upper()
+	sellerSIN = sellerSIN.upper()
+	buyerSIN = buyerSIN.upper()
+	vehPrice = vehPrice.upper()
+
+
 	curs = connection.cursor()
-	statement = "INSERT INTO auto_sale VALUES(%s, '%s', '%s', '%s', '%s', %s" % (transactionID, sellerSIN, buyerSIN, VIN, dateOfSale, vehPrice)
+	statement = "INSERT INTO auto_sale VALUES(%s, '%s', '%s', '%s', '%s', %s)" % (transactionID, sellerSIN, buyerSIN, VIN, dateOfSale, vehPrice)
 	try:
 		curs.execute(statement)
 	except cx_Oracle.DatabaseError as exc:
@@ -853,12 +713,14 @@ def createAutoSale(transactionID, VIN, sellerSIN, buyerSIN, vehPrice, dateOfSale
 def generateID():
 	##Creates a random number to be used for auto sale transaction 
 	idNum = ''.join(random.choice(string.digits) for i in range(6))
+	idNum = idNum.upper()
 	while transIDinDB(idNum):
 		licenceNum = ''.join(random.choice(string.digits) for i in range(6))	
 	return idNum
 
 def transIDinDB(idNum):
 	#Checks if a transaction id already exists
+	idNum = idNum.upper()
 	curs = connection.cursor()
 	statement = "select a.transaction_id from auto_sale a where a.transaction_id = '%s'" % idNum
 	curs.execute(statement)
@@ -871,6 +733,7 @@ def transIDinDB(idNum):
 
 def licenceNumInDB(NUM):
 	# Checks if licence number is already in DB
+	NUM = NUM.upper()
 	curs = connection.cursor()
 	statement = "select l.licence_no from drive_licence l where l.licence_no = '%s'" % NUM
 	curs.execute(statement)
@@ -884,6 +747,10 @@ def licenceNumInDB(NUM):
 	
 def addOwner(VIN, buyerSIN):
 	## Adds an owner to the vehicle at VIN as a primary owner...
+	VIN = VIN.upper()
+	buyerSIN = buyerSIN.upper()
+
+
 	curs = connection.cursor()
 	statement = "INSERT INTO owner VALUES ('%s', '%s', 'y')" % (buyerSIN, VIN)
 
@@ -901,6 +768,8 @@ def addOwner(VIN, buyerSIN):
 def removeVehicleOwners(VIN):
 	## Removes all owners associated with the vehicle at the VIN, even if there are none available
 	## Returns nothing
+	VIN = VIN.upper()
+
 	curs = connection.cursor()
 	statement = "delete from owner o where o.vehicle_id = '%s'" % VIN 
 
@@ -918,15 +787,18 @@ def removeVehicleOwners(VIN):
 def checkSellerOwnsVehicle(sellerSIN, VIN):
 	## Checks to see if anyone other than sellerSIN is associated with the VIN
 	## Returns True if seller or nobody owns; False if someone else is the primary owner
+	sellerSIN = sellerSIN.upper()
+	VIN = VIN.upper()
+
 	curs = connection.cursor()
 	statement = "SELECT * from owner o where o.vehicle_id = '%s'" % (VIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 
-	sellable = True
+	sellable = False
 	for row in rows:
-		if row[0].strip() != sellerSIN and row[2] == 'y':
-			sellable = False
+		if row[0].strip() == sellerSIN and row[2] == 'y':
+			sellable = True
 	
 	curs.close()
 	if sellable:
@@ -1234,6 +1106,7 @@ Select [1/2]: """)
 def searchLicence(licence):
 	#returns search results from licence 
 	# Need to Add Joins for people without restrictions and such
+	licencse = licencse.upper()
 	curs = connection.cursor()
 	statement = "select p.name, l.licence_no, p.addr, p.birthday, l.class, dc.description, l.expiring_date from people p, drive_licence l, driving_condition dc, restriction r where p.sin = l.sin and l.licence_no = r.licence_no and dc.c_id = r.r_id and l.licence_no = '%s'" % licence
 	curs.execute(statement)
@@ -1245,6 +1118,7 @@ def searchLicence(licence):
 def searchName(name):
 	#returns search results from name
 	# Need to Add Joins for people without restrictions and such
+	name = name.upper()
 	curs = connection.cursor()
 	statement = "select p.name, l.licence_no, p.addr, p.birthday, l.class, dc.description, l.expiring_date from people p, drive_licence l, driving_condition dc, restriction r where p.sin = l.sin and l.licence_no = r.licence_no and dc.c_id = r.r_id and p.name = '%s'" % name
 	curs.execute(statement)
@@ -1254,7 +1128,8 @@ def searchName(name):
 	return rows
 
 def main():
-	print ("""PLEASE SELECT FROM THE FOLLOWING OPTIONS:
+	while(True):
+		print ("""PLEASE SELECT FROM THE FOLLOWING OPTIONS:
 	      1. New Vehicle Registration
 	      2. Auto Transaction
 	      3. Driver License Registration
@@ -1262,9 +1137,7 @@ def main():
 	      5. Search Engine
 	      6. Exit""")
 
-	var = 0
-
-	while(var != "6"):
+		var = 0
 		var = input("Select [1/2/3/4/5/6]: ")
 		if (var == "1"):
 			startNVR()
@@ -1283,6 +1156,7 @@ def main():
 	
 		elif (var == "6"):
 			print ("Exiting...")
+			break
 
 		else:
 			print ("Sorry, that's not a valid option!")
@@ -1377,6 +1251,10 @@ def getYN():
 
 def createLicence(licenceNum, SIN, drivingClass, photo, issueDate, expireDate):
 	# Creates a new licence with specifications
+	licenceNum = licenceNum.upper()
+	SIN = SIN.upper()
+	drivingClass = drivingClass.upper()
+
 	curs = connection.cursor()
 	curs.setinputsizes(photo=cx_Oracle.BLOB)
 	statement = "INSERT INTO drive_licence VALUES('%s', '%s', '%s', %s, '%s', '%s')" % (licenceNum, SIN, drivingClass, photo, issueDate, expireDate)
