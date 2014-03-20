@@ -28,7 +28,23 @@ Final stuff:
 
 Mar 19:
 
+-	Make master escape character
+-	Do a final check of stuck points
+
 New Vehicle Registration:
-	-	Make sure all serial numbers entered and queried are switched to upper case
-	-	Mare sure people's birthdays print properly
-	- 	Fix vehicle type checking and printing
+	+	Make sure all data that goes to or from DB is uppercased
+	+	Mare sure people's birthdays print properly
+	- 	Sanatize input again
+	-	Add way to just modify primary owners
+
+
+Auto Transaction:
+	-	looks like it all works, just check question and exit logic
+
+Driver Licence Reg:
+	-	Find way to add photo
+	-	do full testing for other bugs
+
+
+Violation Record:
+	-	Make sure office is actually an officer
