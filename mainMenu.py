@@ -304,7 +304,12 @@ def tryRegisterPrimary(VIN):
 					else:
 						print ("Sorry, that's not a valid option!")
 						print ("Please select from either 'm' or 'f'")
-				birthday = input("Person's birthday [DD-MON-YY]: ")
+				while(True):
+					birthday = input("Person's birthday [DD-MON-YY]: ")
+					if not sanitizeYear(birthday):
+						print("Improper date entered")
+						continue
+					break
 						
 				print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (str(name), str(height), str(weight), str(eyeColour), str(hairColour), str(addr), str(gender), str(birthday)))
 				print ("Is this information correct?")
@@ -380,7 +385,13 @@ def tryRegisterSecondary(VIN):
 					else:
 						print ("Sorry, that's not a valid option!")
 						print ("Please select from either 'm' or 'f'")
-				birthday = input("Person's birthday [DD-MON-YY]: ")
+
+				while(True):
+					birthday = input("Person's birthday [DD-MON-YY]: ")
+					if not sanitizeYear(birthday):
+						print("Invalid date entered")
+						continue
+					break
 						
 				print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (str(name), str(height), str(weight), str(eyeColour), str(hairColour), str(addr), str(gender), str(birthday)))
 				print ("Is this information correct?")
@@ -560,9 +571,23 @@ def startAT():
 						while (True):
 							name = input("Person's name: ")
 							i = True
-							height = input("Person's height: ")
+							while(True):
+								height = input("Person's height: ")
+								try:
+									float(height)
+								except:
+									print("Please enter a decimal number")
+									continue
+								break
 							
-							weight = input("Person's weight: ")
+							while(True):
+								weight = input("Person's weight: ")
+								try:
+									float(weight)
+								except:
+									print("Please enter a decimal number")
+									continue
+								break
 
 							eyeColour = input("Person's eye colour: ")
 							hairColour = input("Person's hair colour: ")
@@ -575,7 +600,12 @@ def startAT():
 								else:
 									print ("Sorry, that's not a valid option!")
 									print ("Please select from either 'm' or 'f'")
-							birthday = input("Person's birthday [DD-MON-YY]: ")
+							while(True):
+								birthday = input("Person's birthday [DD-MON-YY]: ")
+								if not sanitizeYear(birthday):
+									print("Improper Date Entered")
+									continue
+								break
 						
 							print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday))
 							print ("Is this information correct?")
@@ -638,7 +668,12 @@ def startAT():
 		## Ask for the vehicle price
 		vehPrice = input("What is the selling price of this vehicle? ")
 
-		dateOfSale = input("Please enter the date of sale in format [DD-MON-YY]: ")
+		while(True):
+			dateOfSale = input("Please enter the date of sale in format [DD-MON-YY]: ")
+			if not sanitizeYear(dateOfSale):
+				print("Improper date entered")
+				continue
+			break
 		removeVehicleOwners(VIN)
 		addOwner(VIN, buyerSIN)
 		transactionID = generateID()
@@ -832,8 +867,22 @@ def startDLR():
 				#add person to DB
 				while (True):
 					name = input("Person's name: ")
-					height = input("Person's height: ")
-					weight = input("Person's weight: ")
+					while(True):
+						height = input("Person's height: ")
+						try:
+							float(height)
+						except:
+							print("please enter a decimal number")
+							continue
+						break
+					while(True):
+						weight = input("Person's weight: ")
+						try:
+							float(weight)
+						except:
+							print("please enter a decimal number")
+							continue
+						break
 					eyeColour = input("Person's eye colour: ")
 					hairColour = input("Person's hair colour: ")
 					addr = input("Person's address: ")
@@ -846,7 +895,13 @@ def startDLR():
 							print ("Sorry, that's not a valid option!")
 							print ("Please select from either 'm' or 'f'")
 				
-					birthday = input("Person's birthday [DD-MON-YY]: ")
+					while(True):
+						birthday = input("Person's birthday [DD-MON-YY]: ")
+						if not sanitizeYear(birthday):
+							print("Improper date entered")
+							continue
+						break
+
 					print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday))
 					print ("Is this information correct?")
 					ans = getYN()
@@ -875,9 +930,14 @@ def startDLR():
 	# Create License
 	drivingClass = input("Please enter a driving class: ")
 
-	issueDate = input("Please enter an issue date [DD-MON-YY], or 'n' for today's date: ")
-	if issueDate == 'n':
-		issueDate = time.strftime("%d-%b-%y")
+	while(True):
+		issueDate = input("Please enter an issue date [DD-MON-YY], or 'n' for today's date: ")
+		if issueDate == 'n':
+			issueDate = time.strftime("%d-%b-%y")
+		if not sanitizeYear(issueDate):
+			print("Improper date entered")
+			continue
+		break
 
 	while(True):
 		try:
@@ -1019,10 +1079,14 @@ def startVR():
 								violationType = possibleTickets[violationType-1]
 					
 								# Ask for the date of the ticket
-								issueDate = input("Please enter the date for which the ticket will be issued [DD-MON-YY] \nor type 'today' for today's date: ")
-
-								if (issueDate == "today"):
-									issueDate = str(time.strftime("%d-%b-%y"))
+								while(True):
+									issueDate = input("Please enter the date for which the ticket will be issued [DD-MON-YY] \nor type 'today' for today's date: ")
+									if (issueDate == "today"):
+										issueDate = str(time.strftime("%d-%b-%y"))
+									if not sanitizeYear(issueDate):
+										print("Improper date entered")
+										continue
+									break
 									
 								# Ask for a place
 								place = input("Please enter the place of the violation: ")
@@ -1387,6 +1451,23 @@ def createLicence(licenceNum, SIN, drivingClass, photo, issueDate, expireDate):
 
 	connection.commit()
 	curs.close()
+
+def sanitizeYear(year):
+	#returns true if year is valid
+	monthNames = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
+	year = year.split('-')
+	if len(year) != 3:
+		return False
+	try:
+		int(year[0])
+		int(year[2])
+	except:
+		return False
+
+	month = year[1].lower()
+	if not month in monthNames:
+		return False
+	return True
 
 #!# a little clusterd right now, maybe consider a delegation function to clean up main
 if __name__ =="__main__":
