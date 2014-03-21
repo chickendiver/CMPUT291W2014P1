@@ -1195,38 +1195,15 @@ Select [1/2/3] [q to return to the main menu]: """)
 			if userInput == '1':
 				# Search by licence Number
 				licence = input("Please enter a licence number to search by: ")
-				results = searchLicence(licence)
-				print("== Results =========")
-
-				#print (results)
-
-				for row in results:
-					name = row[0].strip()
-					licence_no = row[1].strip()
-					addr = row[2].strip()
-					birthday = row[3]
-					dClass = row[4].strip()
-					dCondition = row[5].strip()
-					expDate = row[6]
-
-					print("Name: %s\nLicence Number: %s\nAddress: %s\nBirthday: %s\nDriving Class: %s\nDriving Condition: %s\nExpiration Date: %s\n") % (name, licence_no, addr, birthday, dClass, dCondition, expDate)
+				searchLicence(licence)
+				break
 
 			if userInput == '2':
 				# Search by Name
 				name = input("Please enter a name to search by: ")
-				results = searchName(name)
-				print("== Results =========")
+				searchName(name)
+				break
 
-				for row in results:
-					name = row[0].strip()
-					licence_no = row[1].strip()
-					addr = row[2].strip()
-					birthday = row[3]
-					dClass = row[4].strip()
-					dCondition = row[5].strip()
-					expDate = row[6]
-
-					print("Name: %s\nLicence Number: %s\nAddress: %s\nBirthday: %s\nDriving Class: %s\nDriving Condition: %s\nExpiration Date: %s\n") % (name, licence_no, addr, birthday, dClass, dCondition, expDate)
 		elif searchInput == '2':
 			while(True):
 				## 2. Violation records
@@ -1290,6 +1267,9 @@ def searchLicenceViolation(licenceInput):
 
 		print("ticket number: %d\nviolation date: %s\nviolation type: %s\ndescriptions: %s\n" % (ticketNo, str(vDate.strftime('%d-%b-%y')), vType, descriptions))
 
+	if len(results) == 0:
+		print("\nNo results found\n")
+
 def searchSINViolation(SINInput):
 	## Prints out all violation records for a SIN
 	curs = connection.cursor()
@@ -1306,6 +1286,9 @@ def searchSINViolation(SINInput):
 
 		print("ticket number: %d\nviolation date: %s\nviolation type: %s\ndescriptions: %s\n" % (ticketNo, str(vDate.strftime('%d-%b-%y')), vType, descriptions))
 
+	if len(results) == 0:
+		print("\nNo results found\n")
+
 def searchVINHistory(VIN):
 	## Prints history of the vehicle
 	curs = connection.cursor()
@@ -1321,16 +1304,31 @@ def searchVINHistory(VIN):
 
 		print("Total sales: %d\nAverage price: %d\nNumber of tickets: %d\n" % (salesCount, averagePrice, numberSales))
 
+	if len(results) == 0:
+		print("\nNo results found\n")
+
 def searchLicence(licence):
 	# Returns search results from licence 
 	# Need to Add Joins for people without restrictions and such
 	curs = connection.cursor()
 	statement = "select p.name, l.licence_no, p.addr, p.birthday, l.class, dc.description, l.expiring_date from people p, drive_licence l, driving_condition dc, restriction r where p.sin = l.sin and dc.c_id = r.r_id and l.licence_no = r.licence_no and (l.licence_no) = ('%s')" % licence
 	curs.execute(statement)
-	rows = curs.fetchall()
+	results = curs.fetchall()
 	curs.close()
 	
-	return rows
+	for row in results:
+		name = row[0].strip()
+		licence_no = row[1].strip()
+		addr = row[2].strip()
+		birthday = row[3]
+		dClass = row[4].strip()
+		dCondition = row[5].strip()
+		expDate = row[6]
+
+		print("Name: %s\nLicence Number: %s\nAddress: %s\nBirthday: %s\nDriving Class: %s\nDriving Condition: %s\nExpiration Date: %s\n" % (name, licence_no, addr, str(birthday.strftime('%d-%b-%y')), dClass, dCondition, str(expDate.strftime('%d-%b-%y'))))
+
+	if len(results) == 0:
+		print("\nNo results found\n")
 
 def searchName(name):
 	# Returns search results from name
@@ -1338,10 +1336,22 @@ def searchName(name):
 	curs = connection.cursor()
 	statement = "select p.name, l.licence_no, p.addr, p.birthday, l.class, dc.description, l.expiring_date from people p, drive_licence l, driving_condition dc, restriction r where p.sin = l.sin and dc.c_id = r.r_id and l.licence_no = r.licence_no and UPPER(p.name) = UPPER('%s')" % name
 	curs.execute(statement)
-	rows = curs.fetchall()
+	results = curs.fetchall()
 	curs.close()
 	
-	return rows
+	for row in results:
+		name = row[0].strip()
+		licence_no = row[1].strip()
+		addr = row[2].strip()
+		birthday = row[3]
+		dClass = row[4].strip()
+		dCondition = row[5].strip()
+		expDate = row[6]
+
+		print("Name: %s\nLicence Number: %s\nAddress: %s\nBirthday: %s\nDriving Class: %s\nDriving Condition: %s\nExpiration Date: %s\n" % (name, licence_no, addr, str(birthday.strftime('%d-%b-%y')), dClass, dCondition, str(expDate.strftime('%d-%b-%y'))))
+	
+	if len(results) == 0:
+		print("\nNo results found\n")
 
 def main():
 	while(True):
