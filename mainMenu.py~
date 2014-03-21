@@ -304,7 +304,12 @@ def tryRegisterPrimary(VIN):
 					else:
 						print ("Sorry, that's not a valid option!")
 						print ("Please select from either 'm' or 'f'")
-				birthday = input("Person's birthday [DD-MON-YY]: ")
+				while(True):
+					birthday = input("Person's birthday [DD-MON-YY]: ")
+					if not sanitizeYear(birthday):
+						print("Improper date entered")
+						continue
+					break
 						
 				print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (str(name), str(height), str(weight), str(eyeColour), str(hairColour), str(addr), str(gender), str(birthday)))
 				print ("Is this information correct?")
@@ -380,7 +385,13 @@ def tryRegisterSecondary(VIN):
 					else:
 						print ("Sorry, that's not a valid option!")
 						print ("Please select from either 'm' or 'f'")
-				birthday = input("Person's birthday [DD-MON-YY]: ")
+
+				while(True):
+					birthday = input("Person's birthday [DD-MON-YY]: ")
+					if not sanitizeYear(birthday):
+						print("Invalid date entered")
+						continue
+					break
 						
 				print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (str(name), str(height), str(weight), str(eyeColour), str(hairColour), str(addr), str(gender), str(birthday)))
 				print ("Is this information correct?")
@@ -560,9 +571,23 @@ def startAT():
 						while (True):
 							name = input("Person's name: ")
 							i = True
-							height = input("Person's height: ")
+							while(True):
+								height = input("Person's height: ")
+								try:
+									float(height)
+								except:
+									print("Please enter a decimal number")
+									continue
+								break
 							
-							weight = input("Person's weight: ")
+							while(True):
+								weight = input("Person's weight: ")
+								try:
+									float(weight)
+								except:
+									print("Please enter a decimal number")
+									continue
+								break
 
 							eyeColour = input("Person's eye colour: ")
 							hairColour = input("Person's hair colour: ")
@@ -575,7 +600,12 @@ def startAT():
 								else:
 									print ("Sorry, that's not a valid option!")
 									print ("Please select from either 'm' or 'f'")
-							birthday = input("Person's birthday [DD-MON-YY]: ")
+							while(True):
+								birthday = input("Person's birthday [DD-MON-YY]: ")
+								if not sanitizeYear(birthday):
+									print("Improper Date Entered")
+									continue
+								break
 						
 							print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday))
 							print ("Is this information correct?")
@@ -638,7 +668,12 @@ def startAT():
 		## Ask for the vehicle price
 		vehPrice = input("What is the selling price of this vehicle? ")
 
-		dateOfSale = input("Please enter the date of sale in format [DD-MON-YY]: ")
+		while(True):
+			dateOfSale = input("Please enter the date of sale in format [DD-MON-YY]: ")
+			if not sanitizeYear(dateOfSale):
+				print("Improper date entered")
+				continue
+			break
 		removeVehicleOwners(VIN)
 		addOwner(VIN, buyerSIN)
 		transactionID = generateID()
@@ -832,8 +867,22 @@ def startDLR():
 				#add person to DB
 				while (True):
 					name = input("Person's name: ")
-					height = input("Person's height: ")
-					weight = input("Person's weight: ")
+					while(True):
+						height = input("Person's height: ")
+						try:
+							float(height)
+						except:
+							print("please enter a decimal number")
+							continue
+						break
+					while(True):
+						weight = input("Person's weight: ")
+						try:
+							float(weight)
+						except:
+							print("please enter a decimal number")
+							continue
+						break
 					eyeColour = input("Person's eye colour: ")
 					hairColour = input("Person's hair colour: ")
 					addr = input("Person's address: ")
@@ -846,7 +895,13 @@ def startDLR():
 							print ("Sorry, that's not a valid option!")
 							print ("Please select from either 'm' or 'f'")
 				
-					birthday = input("Person's birthday [DD-MON-YY]: ")
+					while(True):
+						birthday = input("Person's birthday [DD-MON-YY]: ")
+						if not sanitizeYear(birthday):
+							print("Improper date entered")
+							continue
+						break
+
 					print ("\nName: %s\nHeight: %s\nWeight: %s\nHair Colour: %s\nHair Colour: %s\nAddress: %s\nGender: %s\nBirthday: %s" % (name, height, weight, eyeColour, hairColour, addr, gender, birthday))
 					print ("Is this information correct?")
 					ans = getYN()
@@ -875,9 +930,14 @@ def startDLR():
 	# Create License
 	drivingClass = input("Please enter a driving class: ")
 
-	issueDate = input("Please enter an issue date [DD-MON-YY], or 'n' for today's date: ")
-	if issueDate == 'n':
-		issueDate = time.strftime("%d-%b-%y")
+	while(True):
+		issueDate = input("Please enter an issue date [DD-MON-YY], or 'n' for today's date: ")
+		if issueDate == 'n':
+			issueDate = time.strftime("%d-%b-%y")
+		if not sanitizeYear(issueDate):
+			print("Improper date entered")
+			continue
+		break
 
 	while(True):
 		try:
@@ -1019,10 +1079,14 @@ def startVR():
 								violationType = possibleTickets[violationType-1]
 					
 								# Ask for the date of the ticket
-								issueDate = input("Please enter the date for which the ticket will be issued [DD-MON-YY] \nor type 'today' for today's date: ")
-
-								if (issueDate == "today"):
-									issueDate = str(time.strftime("%d-%b-%y"))
+								while(True):
+									issueDate = input("Please enter the date for which the ticket will be issued [DD-MON-YY] \nor type 'today' for today's date: ")
+									if (issueDate == "today"):
+										issueDate = str(time.strftime("%d-%b-%y"))
+									if not sanitizeYear(issueDate):
+										print("Improper date entered")
+										continue
+									break
 									
 								# Ask for a place
 								place = input("Please enter the place of the violation: ")
@@ -1119,6 +1183,8 @@ Select [1/2/3] [q to return to the main menu]: """)
 				results = searchLicence(licence)
 				print("== Results =========")
 
+				#print (results)
+
 				for row in results:
 					name = row[0].strip()
 					licence_no = row[1].strip()
@@ -1182,6 +1248,7 @@ Select [1/2/3] [q to return to the main menu]: """)
 				vehicleHistoryVIN = input ("Please enter the VIN of the vehicle in question: ")
 				if (vinInDB(vehicleHistoryVIN)):
 					searchVINHistory(vehicleHistoryVIN)
+					break
 				else:
 					print("Sorry, that VIN is not in the DB. Please try again.")
 					continue
@@ -1195,32 +1262,55 @@ Select [1/2/3] [q to return to the main menu]: """)
 def searchLicenceViolation(licenceInput):
 	## Prints out all violation records for a licence_no
 	curs = connection.cursor()
-	statement = 'select ticket_no, vdate, vtype, descriptions from (select * from ticket LEFT JOIN drive_licence on ticket.violator_no = drive_licence.sin) WHERE licence_no = %s;' % licenceInput
+	statement = "select t.ticket_no, t.vdate, t.vtype, t.descriptions from ticket t, drive_licence dl where t.violator_no = dl.sin AND dl.licence_no = '%s'" % licenceInput
 	curs.execute(statement)
-	rows = curs.fetchall()
+	results = curs.fetchall()
 	curs.close()
+
+	for row in results:
+		ticketNo = row[0]
+		vDate = row[1]
+		vType = row[2]
+		descriptions = row[3]
+
+		print("ticket number: %d\nviolation date: %s\nviolation type: %s\ndescriptions: %s\n" % (ticketNo, str(vDate.strftime('%d-%b-%y')), vType, descriptions))
 
 def searchSINViolation(SINInput):
 	## Prints out all violation records for a SIN
 	curs = connection.cursor()
-	statement = 'select ticket_no, vdate, vtype, descriptions from (select * from ticket LEFT JOIN drive_licence on ticket.violator_no = drive_licence.sin) WHERE licence_no = WHERE sin = %s;' % SINInput
+	statement = "select t.ticket_no, t.vdate, t.vtype, t.descriptions from ticket t, drive_licence dl where t.violator_no = dl.sin AND dl.sin = '%s'" % SINInput
 	curs.execute(statement)
-	rows = curs.fetchall()
+	results = curs.fetchall()
 	curs.close()
+
+	for row in results:
+		ticketNo = row[0]
+		vDate = row[1]
+		vType = row[2]
+		descriptions = row[3]
+
+		print("ticket number: %d\nviolation date: %s\nviolation type: %s\ndescriptions: %s\n" % (ticketNo, str(vDate.strftime('%d-%b-%y')), vType, descriptions))
 
 def searchVINHistory(VIN):
 	## Prints history of the vehicle
 	curs = connection.cursor()
-	statement = 'select counts.c, avgs.a, viols.cnt from (select count(*) as c from auto_sale )counts, (select SUM(price)/count(*) as a from auto_sale )avgs, (select count(*) as cnt from ticket )viols where counts.vehicle_id = %s AND avgs.vehicle_id = %s AND viols.vehicle_id = %s;' % (VIN, VIN, VIN)
+	statement = "select counts.c, avgs.a, viols.cnt from (select count(*) as c from auto_sale where vehicle_id = '%s')counts, (select SUM(price)/count(*) as a from auto_sale where vehicle_id = '%s')avgs, (select count(*) as cnt from ticket where vehicle_id = '%s')viols" % (VIN, VIN, VIN)
 	curs.execute(statement)
-	rows = curs.fetchall()
+	results = curs.fetchall()
 	curs.close()
+
+	for row in results:
+		salesCount = row[0]
+		averagePrice = row[1]
+		numberSales = row[2]
+
+		print("Total sales: %d\nAverage price: %d\nNumber of tickets: %d\n" % (salesCount, averagePrice, numberSales))
 
 def searchLicence(licence):
 	# Returns search results from licence 
 	# Need to Add Joins for people without restrictions and such
 	curs = connection.cursor()
-	statement = "select s1.name, s1.licence_no, s1.addr, s1.birthday, s1.class, s2.description from (select * from people LEFT JOIN drive_licence on people.sin = drive_licence.sin)s1, (select * from driving_condition LEFT JOIN restriction on driving_condition.c_id = restriction.r_id)s2 where s1.licence_no = s2.licence_no AND s1.licence_no = %s;" % licence
+	statement = "select p.name, l.licence_no, p.addr, p.birthday, l.class, dc.description, l.expiring_date from people p, drive_licence l, driving_condition dc, restriction r where p.sin = l.sin and dc.c_id = r.r_id and l.licence_no = r.licence_no and (l.licence_no) = ('%s')" % licence
 	curs.execute(statement)
 	rows = curs.fetchall()
 	curs.close()
@@ -1231,7 +1321,7 @@ def searchName(name):
 	# Returns search results from name
 	# Need to Add Joins for people without restrictions and such
 	curs = connection.cursor()
-	statement = "select s1.name, s1.licence_no, s1.addr, s1.birthday, s1.class, s2.description from (select * from people LEFT JOIN drive_licence on people.sin = drive_licence.sin)s1, (select * from driving_condition LEFT JOIN restriction on driving_condition.c_id = restriction.r_id)s2 where s1.licence_no = s2.licence_no AND UPPER(s1.name) = %s;" % name
+	statement = "select p.name, l.licence_no, p.addr, p.birthday, l.class, dc.description, l.expiring_date from people p, drive_licence l, driving_condition dc, restriction r where p.sin = l.sin and dc.c_id = r.r_id and l.licence_no = r.licence_no and UPPER(p.name) = UPPER('%s')" % name
 	curs.execute(statement)
 	rows = curs.fetchall()
 	curs.close()
@@ -1387,6 +1477,23 @@ def createLicence(licenceNum, SIN, drivingClass, photo, issueDate, expireDate):
 
 	connection.commit()
 	curs.close()
+
+def sanitizeYear(year):
+	#returns true if year is valid
+	monthNames = ['jan', 'feb', 'mar', 'apr', 'may', 'jun', 'jul', 'aug', 'sep', 'oct', 'nov', 'dec']
+	year = year.split('-')
+	if len(year) != 3:
+		return False
+	try:
+		int(year[0])
+		int(year[2])
+	except:
+		return False
+
+	month = year[1].lower()
+	if not month in monthNames:
+		return False
+	return True
 
 #!# a little clusterd right now, maybe consider a delegation function to clean up main
 if __name__ =="__main__":

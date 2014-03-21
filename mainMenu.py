@@ -1202,8 +1202,6 @@ Select [1/2/3] [q to return to the main menu]: """)
 				results = searchName(name)
 				print("== Results =========")
 
-				print (results)
-
 				for row in results:
 					name = row[0].strip()
 					licence_no = row[1].strip()
@@ -1250,6 +1248,7 @@ Select [1/2/3] [q to return to the main menu]: """)
 				vehicleHistoryVIN = input ("Please enter the VIN of the vehicle in question: ")
 				if (vinInDB(vehicleHistoryVIN)):
 					searchVINHistory(vehicleHistoryVIN)
+					break
 				else:
 					print("Sorry, that VIN is not in the DB. Please try again.")
 					continue
@@ -1263,26 +1262,49 @@ Select [1/2/3] [q to return to the main menu]: """)
 def searchLicenceViolation(licenceInput):
 	## Prints out all violation records for a licence_no
 	curs = connection.cursor()
-	statement = "select ticket_no, vdate, vtype, descriptions from (select * from ticket LEFT JOIN drive_licence on ticket.violator_no = drive_licence.sin) WHERE licence_no = '%s'" % licenceInput
+	statement = "select t.ticket_no, t.vdate, t.vtype, t.descriptions from ticket t, drive_licence dl where t.violator_no = dl.sin AND dl.licence_no = '%s'" % licenceInput
 	curs.execute(statement)
-	rows = curs.fetchall()
+	results = curs.fetchall()
 	curs.close()
+
+	for row in results:
+		ticketNo = row[0]
+		vDate = row[1]
+		vType = row[2]
+		descriptions = row[3]
+
+		print("ticket number: %d\nviolation date: %s\nviolation type: %s\ndescriptions: %s\n" % (ticketNo, str(vDate.strftime('%d-%b-%y')), vType, descriptions))
 
 def searchSINViolation(SINInput):
 	## Prints out all violation records for a SIN
 	curs = connection.cursor()
-	statement = "select ticket_no, vdate, vtype, descriptions from (select * from ticket LEFT JOIN drive_licence on ticket.violator_no = drive_licence.sin) WHERE licence_no = WHERE sin = '%s'" % SINInput
+	statement = "select t.ticket_no, t.vdate, t.vtype, t.descriptions from ticket t, drive_licence dl where t.violator_no = dl.sin AND dl.sin = '%s'" % SINInput
 	curs.execute(statement)
-	rows = curs.fetchall()
+	results = curs.fetchall()
 	curs.close()
+
+	for row in results:
+		ticketNo = row[0]
+		vDate = row[1]
+		vType = row[2]
+		descriptions = row[3]
+
+		print("ticket number: %d\nviolation date: %s\nviolation type: %s\ndescriptions: %s\n" % (ticketNo, str(vDate.strftime('%d-%b-%y')), vType, descriptions))
 
 def searchVINHistory(VIN):
 	## Prints history of the vehicle
 	curs = connection.cursor()
-	statement = "select counts.c, avgs.a, viols.cnt from (select count(*) as c from auto_sale )counts, (select SUM(price)/count(*) as a from auto_sale )avgs, (select count(*) as cnt from ticket )viols where counts.vehicle_id = '%s' AND avgs.vehicle_id = '%s' AND viols.vehicle_id = '%s'" % (VIN, VIN, VIN)
+	statement = "select counts.c, avgs.a, viols.cnt from (select count(*) as c from auto_sale where vehicle_id = '%s')counts, (select SUM(price)/count(*) as a from auto_sale where vehicle_id = '%s')avgs, (select count(*) as cnt from ticket where vehicle_id = '%s')viols" % (VIN, VIN, VIN)
 	curs.execute(statement)
-	rows = curs.fetchall()
+	results = curs.fetchall()
 	curs.close()
+
+	for row in results:
+		salesCount = row[0]
+		averagePrice = row[1]
+		numberSales = row[2]
+
+		print("Total sales: %d\nAverage price: %d\nNumber of tickets: %d\n" % (salesCount, averagePrice, numberSales))
 
 def searchLicence(licence):
 	# Returns search results from licence 
