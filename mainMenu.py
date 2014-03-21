@@ -1059,49 +1059,93 @@ def startVR():
 def startSE():
 	print ("Search Engine Selected")
 
-	while (True):
-		userInput = input("""PLEASE CHOOSE A SEARCH OPTION:
-	1. Licence Number
-	2. Name 
-Select [1/2]: """)
-		if userInput == '1' or userInput == '2':
-			break
-		else:
-			print("Please enter a valid input")
+	# Ask user to select search type
+	# 1. Driver description
+	# 2. Violation records
+	# 3. Vehicle history
+
+	while(True):
+		searchInput = input("""PLEASE CHOOSE A SEARCH OPTION:
+	1. Driver Description
+	2. Violation Records	
+	3. Vehicle history 
+Select [1/2/3] [q to return to the main menu]: """)
+
+		
+		if searchInput == '1':
+			while (True):
+				userInput = input("""PLEASE CHOOSE A SEARCH OPTION:
+			1. Licence Number
+			2. Name 
+		Select [1/2]: """)
+				if userInput == '1' or userInput == '2':
+					break
+				else:
+					print("Please enter a valid input")
 	
-	if userInput == '1':
-		# Search by licence Number
-		licence = input("Please enter a licence number to search by: ")
-		results = searchLicence(licence)
-		print("== Results =========")
+			if userInput == '1':
+				# Search by licence Number
+				licence = input("Please enter a licence number to search by: ")
+				results = searchLicence(licence)
+				print("== Results =========")
 
-		for row in results:
-			name = row[0].strip()
-			licence_no = row[1].strip()
-			addr = row[2].strip()
-			birthday = row[3]
-			dClass = row[4].strip()
-			dCondition = row[5].strip()
-			expDate = row[6]
+				for row in results:
+					name = row[0].strip()
+					licence_no = row[1].strip()
+					addr = row[2].strip()
+					birthday = row[3]
+					dClass = row[4].strip()
+					dCondition = row[5].strip()
+					expDate = row[6]
 
-			print("Name: %s\nLicence Number: %s\nAddress: %s\nBirthday: %s\nDriving Class: %s\nDriving Condition: %s\nExpiration Date: %s\n") % (name, licence_no, addr, birthday, dClass, dCondition, expDate)
+					print("Name: %s\nLicence Number: %s\nAddress: %s\nBirthday: %s\nDriving Class: %s\nDriving Condition: %s\nExpiration Date: %s\n") % (name, licence_no, addr, birthday, dClass, dCondition, expDate)
 
-	if userInput == '2':
-		# Search by Name
-		name = input("Please enter a name to search by: ")
-		results = searchName(name)
-		print("== Results =========")
+			if userInput == '2':
+				# Search by Name
+				name = input("Please enter a name to search by: ")
+				results = searchName(name)
+				print("== Results =========")
 
-		for row in results:
-			name = row[0].strip()
-			licence_no = row[1].strip()
-			addr = row[2].strip()
-			birthday = row[3]
-			dClass = row[4].strip()
-			dCondition = row[5].strip()
-			expDate = row[6]
+				for row in results:
+					name = row[0].strip()
+					licence_no = row[1].strip()
+					addr = row[2].strip()
+					birthday = row[3]
+					dClass = row[4].strip()
+					dCondition = row[5].strip()
+					expDate = row[6]
 
-			print("Name: %s\nLicence Number: %s\nAddress: %s\nBirthday: %s\nDriving Class: %s\nDriving Condition: %s\nExpiration Date: %s\n") % (name, licence_no, addr, birthday, dClass, dCondition, expDate)
+					print("Name: %s\nLicence Number: %s\nAddress: %s\nBirthday: %s\nDriving Class: %s\nDriving Condition: %s\nExpiration Date: %s\n") % (name, licence_no, addr, birthday, dClass, dCondition, expDate)
+		elif searchInput == '2':
+			while(True):
+				## 2. Violation records
+				while(True):
+					recordInput = input("""PLEASE CHOOSE A SEARCH OPTION:
+				1. Licence Number
+				2. SIN
+			Select [1/2]: """)
+					if recordInput == '1':
+						## Search via licence number
+
+					elif recordInput == '2':
+						## Search via SIN
+
+					else:
+						print("Sorry, that's not an appropriate input.")	
+						continue
+				
+		elif searchInput == '3':	
+			while(True):
+
+				## 3. Vehicle history
+				while(True):
+					vehicleHistoryVIN = input ("Please enter the VIN of the vehicle in question: ")
+					
+		elif searchInput == 'q':
+			main()
+		else:
+			print("That is not a valid option. Please try again.")	
+			continue
 
 
 def searchLicence(licence):
