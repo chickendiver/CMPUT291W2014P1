@@ -937,10 +937,8 @@ def displayPossibleViolations():
 
 def createViolation(ticketNumber, violatorSIN, vehicleID, officerSIN, violationType, issueDate, place, descriptions):
 	## Creates a violation row in the ticket table
-<<<<<<< HEAD
+
 	return True
-#ver by entering either a licence_no or a given name. It shall display all the entries if a duplicate name is given.
-=======
 	curs = connection.cursor()
 	statement = "INSERT INTO ticket VALUES(%s, '%s', '%s', '%s', '%s', '%s', '%s', '%s')" % (ticketNumber, violatorSIN, vehicleID, officerSIN, violationType, issueDate, place, descriptions)
 
@@ -959,7 +957,6 @@ def createViolation(ticketNumber, violatorSIN, vehicleID, officerSIN, violationT
 
 	connection.commit()
 	curs.close()
->>>>>>> chase
 
 #List all violation records received by a person if  the drive licence_no or sin of a person  is entered.
 def generateTicketNumber():
@@ -1108,9 +1105,11 @@ Select [1/2/3] [q to return to the main menu]: """)
 				userInput = input("""PLEASE CHOOSE A SEARCH OPTION:
 			1. Licence Number
 			2. Name 
-		Select [1/2]: """)
+		Select [1/2] [q for main menu]: """)
 				if userInput == '1' or userInput == '2':
 					break
+				elif userInput == 'q':
+					main()
 				else:
 					print("Please enter a valid input")
 	
@@ -1221,11 +1220,7 @@ def searchLicence(licence):
 	# Returns search results from licence 
 	# Need to Add Joins for people without restrictions and such
 	curs = connection.cursor()
-<<<<<<< HEAD
 	statement = "select s1.name, s1.licence_no, s1.addr, s1.birthday, s1.class, s2.description from (select * from people LEFT JOIN drive_licence on people.sin = drive_licence.sin)s1, (select * from driving_condition LEFT JOIN restriction on driving_condition.c_id = restriction.r_id)s2 where s1.licence_no = s2.licence_no AND s1.licence_no = %s;" % licence
-=======
-	statement = "select p.name, l.licence_no, p.addr, p.birthday, l.class, dc.description, l.expiring_date from people p, drive_licence l, driving_condition dc, restriction r where (p.sin) = (l.sin) and (l.licence_no) = (r.licence_no) and (dc.c_id) = (r.r_id) and (l.licence_no) = ('%s')" % licence
->>>>>>> chase
 	curs.execute(statement)
 	rows = curs.fetchall()
 	curs.close()
@@ -1236,11 +1231,7 @@ def searchName(name):
 	# Returns search results from name
 	# Need to Add Joins for people without restrictions and such
 	curs = connection.cursor()
-<<<<<<< HEAD
 	statement = "select s1.name, s1.licence_no, s1.addr, s1.birthday, s1.class, s2.description from (select * from people LEFT JOIN drive_licence on people.sin = drive_licence.sin)s1, (select * from driving_condition LEFT JOIN restriction on driving_condition.c_id = restriction.r_id)s2 where s1.licence_no = s2.licence_no AND UPPER(s1.name) = %s;" % name
-=======
-	statement = "select p.name, l.licence_no, p.addr, p.birthday, l.class, dc.description, l.expiring_date from people p, drive_licence l, driving_condition dc, restriction r where (p.sin) = (l.sin) and (l.licence_no) = (r.licence_no) and (dc.c_id) = (r.r_id) and (p.name) = ('%s')" % name
->>>>>>> chase
 	curs.execute(statement)
 	rows = curs.fetchall()
 	curs.close()
