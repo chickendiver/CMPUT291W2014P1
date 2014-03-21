@@ -12,7 +12,7 @@ def vinInDB(VIN):
 	VIN = VIN.upper()
 
 	curs = connection.cursor()
-	statement = "select v.serial_no from vehicle v where v.serial_no = '" + str(VIN) + "'"
+	statement = "select v.serial_no from vehicle v where upper(v.serial_no) = upper('" + str(VIN) + "')"
 	curs.execute(statement)
 	rows = curs.fetchall()
 
@@ -83,8 +83,10 @@ def sinExists(SIN):
 	## Returns True for now..
 	SIN = SIN.upper()
 
+	print("Searching for sin: %s" % SIN)
+
 	curs = connection.cursor()
-	statement = "select p.sin from people p where p.sin = '" + str(SIN) + "'"
+	statement = "select p.sin from people p where upper(p.sin) = upper('" + str(SIN) + "')"
 	curs.execute(statement)
 	rows = curs.fetchall()
 
@@ -99,7 +101,7 @@ def licenceExists(SIN):
 	SIN = SIN.upper()
 
 	curs = connection.cursor()
-	statement = "select l.sin from drive_licence l where l.sin = '%s'" % (SIN)
+	statement = "select l.sin from drive_licence l where upper(l.sin) = upper('%s')" % (SIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 	curs.close()
@@ -113,7 +115,7 @@ def removeLicence(SIN):
 	SIN = SIN.upper()
 
 	curs = connection.cursor()
-	statement = "delete from drive_licence l where l.sin = '%s'" % SIN
+	statement = "delete from drive_licence l where upper(l.sin) = upper('%s')" % SIN
 	try:
 		curs.execute(statement)
 	except cx_Oracle.DatabaseError as exc:
@@ -131,7 +133,7 @@ def DBgetPersonName(SIN):
 	SIN = SIN.upper()
 
 	curs = connection.cursor()
-	statement = "select p.name from people p where p.sin = '%s'" % (SIN)
+	statement = "select p.name from people p where upper(p.sin) = upper('%s')" % (SIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 
@@ -143,7 +145,7 @@ def DBgetPersonHeight(SIN):
 	SIN = SIN.upper()
 
 	curs = connection.cursor()
-	statement = "select p.height from people p where p.sin = '%s'" % (SIN)
+	statement = "select p.height from people p where upper(p.sin) = upper('%s')" % (SIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 
@@ -155,7 +157,7 @@ def DBgetPersonWeight(SIN):
 	SIN = SIN.upper()
 
 	curs = connection.cursor()
-	statement = "select p.weight from people p where p.sin = '%s'" % (SIN)
+	statement = "select p.weight from people p where upper(p.sin) = upper('%s')" % (SIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 
@@ -167,7 +169,7 @@ def DBgetPersonEyeColour(SIN):
 	SIN = SIN.upper()
 
 	curs = connection.cursor()
-	statement = "select p.eyecolor from people p where p.sin = '%s'" % (SIN)
+	statement = "select p.eyecolor from people p where upper(p.sin) = upper('%s')" % (SIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 
@@ -179,7 +181,7 @@ def DBgetPersonHairColour(SIN):
 	SIN = SIN.upper()
 
 	curs = connection.cursor()
-	statement = "select p.haircolor from people p where p.sin = '%s'" % (SIN)
+	statement = "select p.haircolor from people p where upper(p.sin) = upper('%s')" % (SIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 
@@ -191,7 +193,7 @@ def DBgetPersonAddress(SIN):
 	SIN = SIN.upper()
 
 	curs = connection.cursor()
-	statement = "select p.addr from people p where p.sin = '%s'" % (SIN)
+	statement = "select p.addr from people p where upper(p.sin) = upper('%s')" % (SIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 
@@ -203,7 +205,7 @@ def DBgetGender(SIN):
 	SIN = SIN.upper()
 
 	curs = connection.cursor()
-	statement = "select p.gender from people p where p.sin = '%s'" % (SIN)
+	statement = "select p.gender from people p where upper(p.sin) = upper('%s')" % (SIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 
@@ -215,7 +217,7 @@ def DBgetBirthday(SIN):
 	SIN = SIN.upper()
 
 	curs = connection.cursor()
-	statement = "select p.birthday from people p where p.sin = '%s'" % (SIN)
+	statement = "select p.birthday from people p where upper(p.sin) = upper('%s')" % (SIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 
@@ -644,7 +646,7 @@ def DBgetVehicleMake(VIN):
 	## Returns the make of vehicle at VIN
 	VIN = VIN.upper()
 	curs = connection.cursor()
-	statement = "SELECT v.maker from vehicle v where v.serial_no = '%s'" % (VIN)
+	statement = "SELECT v.maker from vehicle v where upper(v.serial_no) = upper('%s')" % (VIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 
@@ -655,7 +657,7 @@ def DBgetVehicleModel(VIN):
 	## Returns the model of vehicle at VIN
 	VIN = VIN.upper()	
 	curs = connection.cursor()
-	statement = "SELECT v.model from vehicle v where v.serial_no = '%s'" % (VIN)
+	statement = "SELECT v.model from vehicle v where upper(v.serial_no) = upper('%s')" % (VIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 
@@ -666,7 +668,7 @@ def DBgetVehicleYear(VIN):
 	## Returns the year of the vehicle at VIN
 	VIN = VIN.upper()
 	curs = connection.cursor()
-	statement = "SELECT v.year from vehicle v where v.serial_no = '%s'" % (VIN)
+	statement = "SELECT v.year from vehicle v where upper(v.serial_no) = upper('%s')" % (VIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 
@@ -677,7 +679,7 @@ def DBgetVehicleColor(VIN):
 	## Returns the color of the vehicle at VIN
 	VIN = VIN.upper()
 	curs = connection.cursor()
-	statement = "SELECT v.color from vehicle v where v.serial_no = '%s'" % (VIN)
+	statement = "SELECT v.color from vehicle v where upper(v.serial_no) = upper('%s')" % (VIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 
@@ -715,14 +717,14 @@ def generateID():
 	idNum = ''.join(random.choice(string.digits) for i in range(6))
 	idNum = idNum.upper()
 	while transIDinDB(idNum):
-		licenceNum = ''.join(random.choice(string.digits) for i in range(6))	
+		idNum = ''.join(random.choice(string.digits) for i in range(6))	
 	return idNum
 
 def transIDinDB(idNum):
 	#Checks if a transaction id already exists
 	idNum = idNum.upper()
 	curs = connection.cursor()
-	statement = "select a.transaction_id from auto_sale a where a.transaction_id = '%s'" % idNum
+	statement = "select a.transaction_id from auto_sale a where upper(a.transaction_id) = upper('%s')" % idNum
 	curs.execute(statement)
 	rows = curs.fetchall()
 
@@ -735,7 +737,7 @@ def licenceNumInDB(NUM):
 	# Checks if licence number is already in DB
 	NUM = NUM.upper()
 	curs = connection.cursor()
-	statement = "select l.licence_no from drive_licence l where l.licence_no = '%s'" % NUM
+	statement = "select l.licence_no from drive_licence l where upper(l.licence_no) = upper('%s')" % NUM
 	curs.execute(statement)
 	rows = curs.fetchall()
 
@@ -771,7 +773,7 @@ def removeVehicleOwners(VIN):
 	VIN = VIN.upper()
 
 	curs = connection.cursor()
-	statement = "delete from owner o where o.vehicle_id = '%s'" % VIN 
+	statement = "delete from owner o where upper(o.vehicle_id) = upper('%s')" % VIN 
 
 	try:
 		curs.execute(statement)
@@ -791,7 +793,7 @@ def checkSellerOwnsVehicle(sellerSIN, VIN):
 	VIN = VIN.upper()
 
 	curs = connection.cursor()
-	statement = "SELECT * from owner o where o.vehicle_id = '%s'" % (VIN)
+	statement = "SELECT * from owner o where upper(o.vehicle_id) = upper('%s')" % (VIN)
 	curs.execute(statement)
 	rows = curs.fetchall()
 
@@ -929,100 +931,136 @@ def startDLR():
 def displayPossibleViolations():
 	## Prints unique violations as they exist in the table "ticket_type"
 	## For the user's reference
+	curs = connection.cursor()
+	statement = "select t.vtype from ticket_type t"
+	curs.execute(statement)
+	rows = curs.fetchall()
 
-	return True
+	possibleTickets = list()
+	#for row in rows:
+	#	row = row[0][0].split()
+
+	for i in range(len(rows)):
+		possibleTickets.append(rows[i][0].split()[0])
+		print("%d. %s" % (i+1, str(rows[i][0].split()[0])))
+
+	return possibleTickets
 
 
-def checkViolationExists(violationType):
-	## Checks to see if the violationType argument exists in the "ticket_type"
-	## Returns True for now...
-	return True
 
-def stringToDate(dateString):
-	## Turns a string to a date
-	return True
-
-def createViolation(ticketNumber, violatorSIN, vehicleID, violationType, issueDate, place, descriptions):
+def createViolation(ticketNumber, violatorSIN, vehicleID, officerSIN, violationType, issueDate, place, descriptions):
 	## Creates a violation row in the ticket table
-	return True
+	curs = connection.cursor()
+	statement = "INSERT INTO ticket VALUES(%s, '%s', '%s', %s, '%s', '%s', '%s', '%s')" % (ticketNumber, violatorSIN, vehicleID, officerSIN, violationType, issueDate, place, descriptions)
+	
+	print("entering values")
+
+	try:
+		curs.execute(statement)
+	except cx_Oracle.DatabaseError as exc:
+		error, = exc.args
+		print(sys.stderr, "Error creating new violation: ", statement)
+		print(sys.stderr, "Oracle code: ", error.code)
+		print(sys.stderr, "Oracle message: ", error.message)
+
+	connection.commit()
+	curs.close()
 
 def generateTicketNumber():
 	## Generates a random number
-	return randint(4000,90000)
+	idNum = ''.join(random.choice(string.digits) for i in range(6))
+	idNum = idNum.upper()
+	while ticketIDinDB(idNum):
+		idNum = ''.join(random.choice(string.digits) for i in range(6))	
+	return idNum
+
+def ticketIDinDB(idNum):
+	idNum = idNum.upper()
+	curs = connection.cursor()
+	statement = "select a.ticket_no from ticket a where upper(a.ticket_no) = upper('%s')" % idNum
+	curs.execute(statement)
+	rows = curs.fetchall()
+
+	curs.close()
+	if len(rows) > 0:
+		return True
+	return False
+
+
 
 def startVR():
 	print ("Violation Record Selected")
 
-
 	while(True):
-
 		# Ask to enter badge number
 		officerID = input("Please enter the issuing officer's SIN: ")
-		if (sinExists(officerID) == False): ## CHANGE TO TRUE
+		if (sinExists(officerID) == True): 
 
 			# Ask for violator's SIN
 			while(True):
 				violatorSIN = input("Please enter the violator's SIN: ")
-				if (sinExists(violatorSIN) == False): ## CHANGE TO TRUE
+				if (sinExists(violatorSIN) == True): 
 					
 					# Ask for the vehicle VIN
 					while(True):
 						vehicleVIN = input("Please enter the vehicle VIN: ")
-						if(vinInDB(vehicleVIN) == False):
+						if(vinInDB(vehicleVIN) == True):
 							
 							# Ask for the type of offense
 							print("Please select a violation from the list below: \n")
-							displayPossibleViolations()
+							possibleTickets = displayPossibleViolations()
 
 							while (True):
 								violationType = input("\nTicket violation: ")
-								violationCheck = checkViolationExists(violationType)
+								try: 
+									violationType = int(violationType)
+								except:
+									print("value enetered is not an integer")
+									continue
+
+								if violationType > len(possibleTickets):
+									print("integer entered too large")
+									continue
+								if violationType < 1:
+									print("integer entered too small")
+									continue
+
+								violationType = possibleTickets[violationType-1]
 					
-								if (violationCheck):
+								# Ask for the date of the ticket
+								issueDate = input("Please enter the date for which the ticket will be issued [DD-MON-YY] \nor type 'today' for today's date: ")
 
-									# Ask for the date of the ticket
-									issueDate = input("Please enter the date for which the ticket will be issued [DD-MON-YY] or type 'today' for today's date: ")
-
-									if (issueDate == "today"):
-										issueDate = time.strftime("%d-%b-%y")
-									else:
-										issueDate = stringToDate(issueDate)
-									# Ask for a place
-									place = input("Please enter the place of the violation: ")
-
-									# Ask for additional descriptions
-									while (True):
-										descriptions = input("Please input any extra descriptions: ")	
-										if(len(descriptions) < 1024):
+								if (issueDate == "today"):
+									issueDate = str(time.strftime("%d-%b-%y"))
 									
-											# Allow the user to review before submitting
-											print("Please review this information:\n")
-				
-											#officerName = DBgetPersonName(officerID)
-											#violatorName = DBgetPersonName(violatorSIN)
-											officerName = "Bob"
-											violatorName = "Jimbo"
-
-											print("Issuing officer name: %s\nViolator name: %s\nVIN: %s\nViolation type: %s\nViolation date: %s\nPlace: %s\nDescriptions: %s\n" % (officerName, violatorName, vehicleVIN, violationType, issueDate, place, descriptions))
-											print ("Is this information correct?: ")
-											ans = getYN()
-											if (ans == 'y'):
-												ticketNumber = generateTicketNumber()
-												createViolation(ticketNumber, violatorSIN, vehicleVIN, violationType, issueDate, place, descriptions)
-												print("Thank you for submitting this ticket.\nReturning to the main menu.")
-												main()
-										
-											else:
-												print("Please try the process again.")
-												startVR()
-
-											# Generate random ticket_no
+								# Ask for a place
+								place = input("Please enter the place of the violation: ")
+								# Ask for additional descriptions
+								while (True):
+									descriptions = input("Please input any extra descriptions: ")	
+									if(len(descriptions) < 1024):
+								
+										# Allow the user to review before submitting
+										print("Please review this information:\n")
+										officerName = DBgetPersonName(officerID)
+										violatorName = DBgetPersonName(violatorSIN)
+										print("Issuing officer name: %s\nViolator name: %s\nVIN: %s\nViolation type: %s\nViolation date: %s\nPlace: %s\nDescriptions: %s\n" % (officerName, violatorName, vehicleVIN, violationType, issueDate, place, descriptions))
+										print ("Is this information correct?: ")
+										ans = getYN()
+										if (ans == 'y'):
+											ticketNumber = generateTicketNumber()
+											createViolation(ticketNumber, violatorSIN, vehicleVIN, officerID, violationType, issueDate, place, descriptions)
+											print("Thank you for submitting this ticket.\nReturning to the main menu.")
+											main()
+									
 										else:
-											print("Sorry, that description is too long. Please try again \n")
-											break
-								else:
-									print ("Sorry, that ticket violation does not exist. Please try again.")
-									break
+											print("Please try the process again.")
+											startVR()
+											# Generate random ticket_no
+									else:
+										print("Sorry, that description is too long. Please try again \n")
+										break
+								
 
 								## END
 						else:
@@ -1108,7 +1146,7 @@ def searchLicence(licence):
 	# Need to Add Joins for people without restrictions and such
 	licencse = licencse.upper()
 	curs = connection.cursor()
-	statement = "select p.name, l.licence_no, p.addr, p.birthday, l.class, dc.description, l.expiring_date from people p, drive_licence l, driving_condition dc, restriction r where p.sin = l.sin and l.licence_no = r.licence_no and dc.c_id = r.r_id and l.licence_no = '%s'" % licence
+	statement = "select p.name, l.licence_no, p.addr, p.birthday, l.class, dc.description, l.expiring_date from people p, drive_licence l, driving_condition dc, restriction r where upper(p.sin) = upper(l.sin) and upper(l.licence_no) = upper(r.licence_no) and upper(dc.c_id) = upper(r.r_id) and upper(l.licence_no) = upper('%s')" % licence
 	curs.execute(statement)
 	rows = curs.fetchall()
 	curs.close()
@@ -1120,7 +1158,7 @@ def searchName(name):
 	# Need to Add Joins for people without restrictions and such
 	name = name.upper()
 	curs = connection.cursor()
-	statement = "select p.name, l.licence_no, p.addr, p.birthday, l.class, dc.description, l.expiring_date from people p, drive_licence l, driving_condition dc, restriction r where p.sin = l.sin and l.licence_no = r.licence_no and dc.c_id = r.r_id and p.name = '%s'" % name
+	statement = "select p.name, l.licence_no, p.addr, p.birthday, l.class, dc.description, l.expiring_date from people p, drive_licence l, driving_condition dc, restriction r where upper(p.sin) = upper(l.sin) and upper(l.licence_no) = upper(r.licence_no) and upper(dc.c_id) = upper(r.r_id) and upper(p.name) = upper('%s')" % name
 	curs.execute(statement)
 	rows = curs.fetchall()
 	curs.close()

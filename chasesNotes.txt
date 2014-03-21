@@ -30,6 +30,7 @@ Mar 19:
 
 -	Make master escape character
 -	Do a final check of stuck points
+-	Fix case sensitivity bug
 
 New Vehicle Registration:
 	+	Make sure all data that goes to or from DB is uppercased
@@ -48,3 +49,10 @@ Driver Licence Reg:
 
 Violation Record:
 	-	Make sure office is actually an officer
+
+
+user photo
+finish number 5
+final testing 
+escape character
+queue of database transactions to be made once thing is done (so they dont get added intermittently )
