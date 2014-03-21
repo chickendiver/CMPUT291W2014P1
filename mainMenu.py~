@@ -945,8 +945,9 @@ def stringToDate(dateString):
 def createViolation(ticketNumber, violatorSIN, vehicleID, violationType, issueDate, place, descriptions):
 	## Creates a violation row in the ticket table
 	return True
-ver by entering either a licence_no or a given name. It shall display all the entries if a duplicate name is given.
-List all violation records received by a person if  the drive licence_no or sin of a person  is entered.
+#ver by entering either a licence_no or a given name. It shall display all the entries if a duplicate name is given.
+
+#List all violation records received by a person if  the drive licence_no or sin of a person  is entered.
 def generateTicketNumber():
 	## Generates a random number
 	return randint(4000,90000)
@@ -1126,13 +1127,20 @@ Select [1/2/3] [q to return to the main menu]: """)
 			Select [1/2]: """)
 					if recordInput == '1':
 						## Search via licence number
+						pass
 
 					elif recordInput == '2':
 						## Search via SIN
+						pass
 
+					elif recordInput == 'q':
+						searchInput = 'NULL'
+						break						
+						
 					else:
 						print("Sorry, that's not an appropriate input.")	
 						continue
+				break
 				
 		elif searchInput == '3':	
 			while(True):
@@ -1140,6 +1148,7 @@ Select [1/2/3] [q to return to the main menu]: """)
 				## 3. Vehicle history
 				while(True):
 					vehicleHistoryVIN = input ("Please enter the VIN of the vehicle in question: ")
+					
 		elif searchInput == 'q':
 			main()
 		else:
@@ -1150,7 +1159,7 @@ Select [1/2/3] [q to return to the main menu]: """)
 def searchLicence(licence):
 	#returns search results from licence 
 	# Need to Add Joins for people without restrictions and such
-	licencse = licencse.upper()
+	licence = licence.upper()
 	curs = connection.cursor()
 	statement = "select p.name, l.licence_no, p.addr, p.birthday, l.class, dc.description, l.expiring_date from people p, drive_licence l, driving_condition dc, restriction r where p.sin = l.sin and l.licence_no = r.licence_no and dc.c_id = r.r_id and l.licence_no = '%s'" % licence
 	curs.execute(statement)
@@ -1207,6 +1216,10 @@ def main():
 	
 	connection.close()
 	sys.exit()
+
+
+
+
 ###################################################################################################
 #
 #                                                                                  ,---.,---.,---.    
