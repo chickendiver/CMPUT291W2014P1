@@ -746,22 +746,25 @@ def createAutoSale(transactionID, VIN, sellerSIN, buyerSIN, vehPrice, dateOfSale
 
 def generateID():
 	##Creates a random number to be used for auto sale transaction 
-	idNum = ''.join(random.choice(string.digits) for i in range(6))
-	while transIDinDB(idNum):
-		idNum = ''.join(random.choice(string.digits) for i in range(6))	
-	return idNum
+	#idNum = ''.join(random.choice(string.digits) for i in range(6))
+	#while transIDinDB(idNum):
+	#	idNum = ''.join(random.choice(string.digits) for i in range(6))	
+	#return idNum
+	return transIDinDB() + 1
 
-def transIDinDB(idNum):
+def transIDinDB():
 	#Checks if a transaction id already exists
 	curs = connection.cursor()
-	statement = "select a.transaction_id from auto_sale a where (a.transaction_id) = ('%s')" % idNum
+	#statement = "select a.transaction_id from auto_sale a where (a.transaction_id) = ('%s')" % idNum
+	statement = "SELECT max(a.transaction_id) from auto_sale a"
 	curs.execute(statement)
 	rows = curs.fetchall()
 
 	curs.close()
-	if len(rows) > 0:
-		return True
-	return False
+	#if len(rows) > 0:
+#		return True
+	#return False
+	return rows[0][0]
 
 def licenceNumInDB(NUM):
 	# Checks if licence number is already in DB
@@ -966,9 +969,17 @@ def startDLR():
 		break
 
 
-	licenceNum = ''.join(random.choice(string.ascii_lowercase + string.digits) for i in range(15))
-	while licenceNumInDB(licenceNum):
-		licenceNum = ''.join(random.choice(string.ascii_lowercase + string.digits) for i in range(15))
+	
+	while(True):
+		licenceNum = input("Please enter a licence number: ")
+		if licenceNumInDB(licenceNum):
+			print("That number is already in the database")
+			continue
+		break
+
+	#licenceNum = ''.join(random.choice(string.ascii_lowercase + string.digits) for i in range(15))
+	#while licenceNumInDB(licenceNum):
+		#licenceNum = ''.join(random.choice(string.ascii_lowercase + string.digits) for i in range(15))
 
 
 	createLicence(licenceNum, SIN, drivingClass, photo, issueDate, expireDate)
@@ -998,7 +1009,6 @@ def displayPossibleViolations():
 def createViolation(ticketNumber, violatorSIN, vehicleID, officerSIN, violationType, issueDate, place, descriptions):
 	## Creates a violation row in the ticket table
 
-	return True
 	curs = connection.cursor()
 	statement = "INSERT INTO ticket VALUES(%s, '%s', '%s', '%s', '%s', '%s', '%s', '%s')" % (ticketNumber, violatorSIN, vehicleID, officerSIN, violationType, issueDate, place, descriptions)
 
@@ -1021,21 +1031,26 @@ def createViolation(ticketNumber, violatorSIN, vehicleID, officerSIN, violationT
 #List all violation records received by a person if  the drive licence_no or sin of a person  is entered.
 def generateTicketNumber():
 	## Generates a random number
-	idNum = ''.join(random.choice(string.digits) for i in range(6))
-	while ticketIDinDB(idNum):
-		idNum = ''.join(random.choice(string.digits) for i in range(6))	
-	return idNum
+	#idNum = ''.join(random.choice(string.digits) for i in range(6))
+	#while ticketIDinDB(idNum):
+#		idNum = ''.join(random.choice(string.digits) for i in range(6))	
+	#return idNum
 
-def ticketIDinDB(idNum):
+	return ticketIDinDB() + 1
+
+def ticketIDinDB():
 	curs = connection.cursor()
-	statement = "select a.ticket_no from ticket a where (a.ticket_no) = ('%s')" % idNum
+	#statement = "select a.ticket_no from ticket a where (a.ticket_no) = ('%s')" % idNum
+	statement = "SELECT max(a.ticket_no) from ticket a"
 	curs.execute(statement)
 	rows = curs.fetchall()
 
 	curs.close()
-	if len(rows) > 0:
-		return True
-	return False
+	#if len(rows) > 0:
+	#	return True
+	#return False
+
+	return rows[0][0]
 
 
 
