@@ -51,8 +51,9 @@ Violation Record:
 	-	Make sure office is actually an officer
 
 
-user photo
++ user photo
 finish number 5
 final testing 
 escape character
 queue of database transactions to be made once thing is done (so they dont get added intermittently )
+sanitize dates and years (really all ints and dates)
