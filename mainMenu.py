@@ -1202,6 +1202,8 @@ Select [1/2/3] [q to return to the main menu]: """)
 				results = searchName(name)
 				print("== Results =========")
 
+				print (results)
+
 				for row in results:
 					name = row[0].strip()
 					licence_no = row[1].strip()
@@ -1286,7 +1288,7 @@ def searchLicence(licence):
 	# Returns search results from licence 
 	# Need to Add Joins for people without restrictions and such
 	curs = connection.cursor()
-	statement = "select s1.name, s1.licence_no, s1.addr, s1.birthday, s1.class, s2.description from (select * from people LEFT JOIN drive_licence on people.sin = drive_licence.sin)s1, (select * from driving_condition LEFT JOIN restriction on driving_condition.c_id = restriction.r_id)s2 where s1.licence_no = s2.licence_no AND s1.licence_no = '%s'" % licence
+	statement = "select p.name, l.licence_no, p.addr, p.birthday, l.class, dc.description, l.expiring_date from people p, drive_licence l, driving_condition dc, restriction r where p.sin = l.sin and dc.c_id = r.r_id and l.licence_no = r.licence_no and (l.licence_no) = ('%s')" % licence
 	curs.execute(statement)
 	rows = curs.fetchall()
 	curs.close()
@@ -1297,7 +1299,7 @@ def searchName(name):
 	# Returns search results from name
 	# Need to Add Joins for people without restrictions and such
 	curs = connection.cursor()
-	statement = "select s1.name, s1.licence_no, s1.addr, s1.birthday, s1.class, s2.description from (select * from people LEFT JOIN drive_licence on people.sin = drive_licence.sin)s1, (select * from driving_condition LEFT JOIN restriction on driving_condition.c_id = restriction.r_id)s2 where s1.licence_no = s2.licence_no AND UPPER(s1.name) = '%s'" % name
+	statement = "select p.name, l.licence_no, p.addr, p.birthday, l.class, dc.description, l.expiring_date from people p, drive_licence l, driving_condition dc, restriction r where p.sin = l.sin and dc.c_id = r.r_id and l.licence_no = r.licence_no and UPPER(p.name) = UPPER('%s')" % name
 	curs.execute(statement)
 	rows = curs.fetchall()
 	curs.close()
