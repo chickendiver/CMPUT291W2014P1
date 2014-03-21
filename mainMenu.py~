@@ -1127,10 +1127,14 @@ Select [1/2/3] [q to return to the main menu]: """)
 			Select [1/2]: """)
 					if recordInput == '1':
 						## Search via licence number
-						pass
+						licenceInput = input("Please enter the licence to search by: ")
+						searchLicenceViolation(licenceInput)
+						break
 
 					elif recordInput == '2':
 						## Search via SIN
+						SINInput = input("Please enter the SIN to search by: ")
+						searchSINViolation(SINInput)
 						pass
 
 					elif recordInput == 'q':
@@ -1143,12 +1147,15 @@ Select [1/2/3] [q to return to the main menu]: """)
 				break
 				
 		elif searchInput == '3':	
-			while(True):
 
-				## 3. Vehicle history
-				while(True):
-					vehicleHistoryVIN = input ("Please enter the VIN of the vehicle in question: ")
-					
+			## 3. Vehicle history
+			while(True):
+				vehicleHistoryVIN = input ("Please enter the VIN of the vehicle in question: ")
+				if (vinInDB(vehicleHistoryVIN)):
+					searchVINHistory(vehicleHistoryVIN)
+				else:
+					print("Sorry, that VIN is not in the DB. Please try again.")
+					continue
 		elif searchInput == 'q':
 			main()
 		else:
@@ -1156,12 +1163,35 @@ Select [1/2/3] [q to return to the main menu]: """)
 			continue
 
 
-def searchLicence(licence):
-	#returns search results from licence 
-	# Need to Add Joins for people without restrictions and such
-	licence = licence.upper()
+def searchLicenceViolation(licenceInput):
+	## Prints out all violation records for a licence_no
 	curs = connection.cursor()
-	statement = "select p.name, l.licence_no, p.addr, p.birthday, l.class, dc.description, l.expiring_date from people p, drive_licence l, driving_condition dc, restriction r where p.sin = l.sin and l.licence_no = r.licence_no and dc.c_id = r.r_id and l.licence_no = '%s'" % licence
+	statement = 'select ticket_no, vdate, vtype, descriptions from (select * from ticket LEFT JOIN drive_licence on ticket.violator_no = drive_licence.sin) WHERE licence_no = %s;' % licenceInput
+	curs.execute(statement)
+	rows = curs.fetchall()
+	curs.close()
+
+def searchSINViolation(SINInput):
+	## Prints out all violation records for a SIN
+	curs = connection.cursor()
+	statement = 'select ticket_no, vdate, vtype, descriptions from (select * from ticket LEFT JOIN drive_licence on ticket.violator_no = drive_licence.sin) WHERE licence_no = WHERE sin = %s;' % SINInput
+	curs.execute(statement)
+	rows = curs.fetchall()
+	curs.close()
+
+def searchVINHistory(VIN):
+	## Prints history of the vehicle
+	curs = connection.cursor()
+	statement = 'select counts.c, avgs.a, viols.cnt from (select count(*) as c from auto_sale )counts, (select SUM(price)/count(*) as a from auto_sale )avgs, (select count(*) as cnt from ticket )viols where counts.vehicle_id = %s AND avgs.vehicle_id = %s AND viols.vehicle_id = %s;' % (VIN, VIN, VIN)
+	curs.execute(statement)
+	rows = curs.fetchall()
+	curs.close()
+
+def searchLicence(licence):
+	# Returns search results from licence 
+	# Need to Add Joins for people without restrictions and such
+	curs = connection.cursor()
+	statement = "select s1.name, s1.licence_no, s1.addr, s1.birthday, s1.class, s2.description from (select * from people LEFT JOIN drive_licence on people.sin = drive_licence.sin)s1, (select * from driving_condition LEFT JOIN restriction on driving_condition.c_id = restriction.r_id)s2 where s1.licence_no = s2.licence_no AND s1.licence_no = %s;" % licence
 	curs.execute(statement)
 	rows = curs.fetchall()
 	curs.close()
@@ -1169,11 +1199,11 @@ def searchLicence(licence):
 	return rows
 
 def searchName(name):
-	#returns search results from name
+	# Returns search results from name
 	# Need to Add Joins for people without restrictions and such
 	name = name.upper()
 	curs = connection.cursor()
-	statement = "select p.name, l.licence_no, p.addr, p.birthday, l.class, dc.description, l.expiring_date from people p, drive_licence l, driving_condition dc, restriction r where p.sin = l.sin and l.licence_no = r.licence_no and dc.c_id = r.r_id and p.name = '%s'" % name
+	statement = "select s1.name, s1.licence_no, s1.addr, s1.birthday, s1.class, s2.description from (select * from people LEFT JOIN drive_licence on people.sin = drive_licence.sin)s1, (select * from driving_condition LEFT JOIN restriction on driving_condition.c_id = restriction.r_id)s2 where s1.licence_no = s2.licence_no AND UPPER(s1.name) = %s;" % name
 	curs.execute(statement)
 	rows = curs.fetchall()
 	curs.close()
