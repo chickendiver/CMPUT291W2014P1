@@ -93,6 +93,7 @@ INSERT INTO ticket VALUES (0008, 100002, '1R53KG', 100004, 'speeding', '21-MAR-1
 
 
 
+INSERT INTO ticket VALUES (738861, 100002, '1R53KG', 100004, 'speeding', '21-MAR-12', 'some street', 'some comments' );
 
 
-
+INSERT INTO ticket VALUES(738861, 100002, 'T5T5Y7', 100001, 'parking', '21-Mar-14', 'school', 'stuff')
