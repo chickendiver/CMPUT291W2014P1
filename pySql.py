@@ -13,7 +13,7 @@ def establishConnection():
 	#drop the table we are about to create incase it already exists
 	#and creating our table with our string 
 	try:
-		connection = cx_Oracle.connect('cmccarty/4cidm4n67@gwynne.cs.ualberta.ca:1521/CRS')
+		connection = cx_Oracle.connect('cmccarty/nothing@gwynne.cs.ualberta.ca:1521/CRS')
 		curs = connection.cursor()
 		curs.execute("drop table TOFFEES")
 		curs.execute(createStr)
